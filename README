@@ -1,0 +1,12 @@
+OCELOT:
+
+Tool to analyze clinical aspects of the cancer dataset available on line.
+the initial implementation take the dataset just from GEO, but the architecture
+of the project is thought to be easily extensible to other sources.
+
+This project is based on the Django framework, also a "Front End" (the admin
+part will be missing) in PHP4 is in development. 
+PHP4 because then is easily usable on Apache based server, 
+even in the older installation (yeah PHP5 came out 8 years ago...).
+
+
