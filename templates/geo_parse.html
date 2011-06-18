@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
+  <script type="text/javascript" src="/media/js/geo_parse.js"></script>
+  <script type="text/javascript">
+   var datasetID = "{{ dataset_id }}";
+   var treatments = {{ treatments|safe }};
+   var subtypes = {{ subtypes|safe }};
+   var diseases = {{ diseases|safe }};
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     initGEO();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+survival admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+<div id='leftDiv'>
+ <button id='backToList' type='button' onclick="window.location='/admin/geo/'">Back to List</button>
+ <div id='geoDicform'>
+  <form action="." method="post">{% csrf_token %}
+   <b>Dictionary:</b></br>
+   {{dictform.as_p}}
+   <b>MetaInfo:</b></br>
+   {{metaform.as_p}}
+   <button type='submit' name='savedict' value='' id='savedict'>
+   Save Dictionary
+   </button>
+  </form>
+ </div><!--geoDicform-->
+</div><!--leftDiv-->
+
+<div id='DSmeta'>
+ <div id='DStitle' class='ui-corner-all'>
+  <b><i>TITLE:</i><br/>
+  {{DS.title}}<br/><br/></b>
+  <i>PubMed ID </i><a href='http://www.ncbi.nlm.nih.gov/pubmed/{{DS.pubmed}}' target='_blank'>link<a>.
+ </div><!--DStitle -->
+ <div id='GEOview' class='ui-corner-all'>
+  view Dataset on <a href='http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dataset_id}}' target='_blank'>GEO</a>
+ </div> <!-- GEOview -->
+ <div id='DSsumm' class='ui-corner-all'>
+  {{DS.summary}}
+ </div><!--DSsumm-->
+ <div id='GSEnGSM' class='ui-corner-all'>
+  {{ acclen}} Samples</br>
+  In {{platforms|length}} Platform(s).
+ </div>  <!-- GSEmGSM -->
+
+ <input type='image' id='viewChar'></input>
+</div><!--DSmeta-->
+
+<ul id='Dictmenu'>
+</ul>
+
+<div id='GSEnChann' class='ui-corner-all'>
+ List of Platform(s):
+ {% for platform in platforms %}
+  <div class='GPLplatform ui-corner-all'> <b>{{platform.id}}</b> : {{platform.title}}</div>
+ {% endfor %}
+</div>
+
+
+<div id='CharTab'>
+ {% for divline in GSMtable %}
+  {{divline}}
+ {% endfor %}	 
+</div> <!--CharTab -->
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/admin.css" />
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     $('#GEOadmin').hover(
+      function() {
+       $('#GEOadmin').attr({ 'src' : '/media/css/img/geo_logo_hover.png' });
+      },
+      function() {
+       $('#GEOadmin').attr({ 'src' : '/media/css/img/geo_logo.png' });
+      }
+     )
+     $('#restoreBKP').hover(
+      function() {
+       $('#restoreBKP').attr({ 'src' : '/media/css/img/backuphover.png' });
+      },
+      function() {
+       $('#restoreBKP').attr({ 'src' : '/media/css/img/backup.png' });
+      }
+     )
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+survival admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href="/admin/">admin</a>
+ {% endblock %}
+
+{% block contents %}
+
+<input type='image' src='/media/css/img/geo_logo.png' onclick="window.location.replace('geo/')" id='GEOadmin'/>
+<input type='image' src='/media/css/img/backup.png' onclick="window.location.replace('geo/')" id='restoreBKP'/>
+
+{% endblock %}

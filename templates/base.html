@@ -1,0 +1,62 @@
+<html>
+ <head>
+
+  <script type="text/javascript" src="/media/js/lib/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="/media/js/lib/jquery-ui-1.8.12.custom.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="/media/css/base.css" />
+ 
+ {% block extahead %}
+
+ {% endblock %}
+
+  <title>
+  {% block title %}
+   Page title on the Tab
+  {% endblock %}
+  </title>
+
+ </head>
+ <body onunload="" >
+  <div id='wrap'>
+   <div id='header' class='ui-state-default ui-corner-top'>
+    <div id='titlehead'>
+     <h1>OCELOT</h1>
+     <h2>Online Cancer Expression Analisys Tool</h2>
+    </div><!-- titlehead -->
+   {% block nav %}
+    <div id="nav">
+     <ul>
+      <li>{% block nav-home %}<a id="nav-home" href="/">Home</a>{% endblock %}</li>
+      <li>{% block nav-help %}<a id="nav-help" href="/help/">Help</a>{%endblock %}</li>
+      <li>{% block nav-admin %}<a id="nav-admin" href="/admin">admin</a>{% endblock%}</li>
+     </ul>
+    </div> <!-- nav -->
+   {% endblock %}
+      
+   </div> <!-- header -->
+   <div id="contents">
+   <div id='loadingDiv'>
+    <div id='loadingMessage' class='ui-corner-all'>
+     <p><img src='/media/css/img/loading.gif' /></br> Please Wait</p>
+    </div>
+   </div><!--loadingDiv-->    
+  {% block contents %}
+   
+  {% endblock %}
+   </div> <!--contents-->
+   <div id='footer'>
+    <a href='http://www.cbs.dtu.dk/'  target='_blank'>
+     <img id='CBSlogo' src='http://www.cbs.dtu.dk/images/im_logo.gif' title='CBS - Center for Biological Sequence Analysis'>
+    </a>
+    <div id='foottext'>
+     <b>CITE:</b> <i>hopefully a paper</i></br>
+     Questions / Problems: <a href='mailto:someone@gmail.com'>admin</a>
+    </div>
+    <a href='http://www.dtu.dk/'  target='_blank'>
+     <img id='DTUlogo' src='http://www.cbs.bio.dtu.dk/images/DTU_logo.gif' title='DTU - Danmarks Tekniske Universitet'>
+    </a>
+   </div> <!-- footer -->
+  </div> <!-- wrap -->
+ </body>
+</html>
+

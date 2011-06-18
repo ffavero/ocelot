@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
+  <script type="text/javascript" src="/media/js/geo_admin.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     initGEO();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+survival admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+ 
+
+ <div id='geo_left_panel'>
+  <div id='geo_ds_list'>
+   {% for ds in d_saved %}
+    <div class='DSLine'>
+     <div class='GSEname'>{{ ds.0 }}
+     </div> <!-- GSEname -->
+     <button type='button' onclick="removeDS('{{ ds.0 }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Remove {{ ds.0 }} from the list'>
+      <span class='ui-button-icon-primary ui-icon ui-icon-minus'></span>
+      <span class="ui-button-text">Remove</span>
+     </button>
+     <button type='button' onclick="goToGSE('{{ ds.0 }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='View {{ ds.0 }} details'>
+      <span class='ui-button-icon-primary ui-icon ui-icon-zoomin'></span>
+      <span class='ui-button-text'>GoTo</span>
+     </button>
+     <img src='/media/css/img/{{ ds.1 }}.png' title='Saved status: {{ ds.1 }}'/>
+    </div> <!-- DSLine -->
+   {% endfor %}	 
+  </div><!--geo_ds_list-->
+  <button type='button' onclick="addDS()" id='addDS'>{% csrf_token %}
+  Add Dataset
+  </button>
+  <div id='DSdialog'>
+   <textarea type='text' id='DSin'></textarea>
+  </div><!--DSdialog -->
+  <div id='DSrmDialog'>
+  </div><!--DSrmDialog-->
+ </div> <!--geo_left_panel-->
+ <div id='GPLlist'>
+  {% for gpl in platforms %}
+   <div class='GPLitem'>
+    <div class='GPLused'>{{gpl.used}}</div>
+    <div class='GPLid'>{{gpl.platform_id}}</div>
+    <div class='GPLlongName'>{{gpl.name}}</div>
+   </div><!--GPLitem-->
+  {% endfor %}
+ </div><!--GPLlist-->
+{% endblock %}

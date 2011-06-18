@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+  <link type="text/css" rel="stylesheet" href="/media/css/index.css" />
+  <script type="text/javascript" src="/media/js/index.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   function doAfter(time, f) {
+     setTimeout(f, time);
+   };
+
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     xmlindex = getXml();
+     xmlINmemory = [];
+     index();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Dataset index
+{% endblock %}
+
+ {% block nav-home %}
+ <a id='nav-home' class='selected' href="/">Home</a>
+ {% endblock %}
+
+{% block contents %}
+
+<input type='text' id='tabFilter' title='Insert a keyword to filter the list'/><button id='addFilter' onclick='add2Filter()' >Add to Filter</button>
+<div id='filterContainer' class='ui-corner-all ui-widget-content'>
+</div> <!--filterContainer-->
+<form id='csv_form' method='post' action='/exportCSV/'>{% csrf_token %}
+    <input type='hidden' id='csv_download' name='csv_download' value=''/>
+    <input type='hidden' id='file_name' name='file_name' value=''/>
+</form>
+<input type='image' id='downloadTable' ></input>
+<div id='idxTable'>
+ <div class='tabHeader'>
+  <div class='cellHead ui-corner-top ui-state-default alias'>Alias</div>
+  <div class='cellHead ui-corner-top ui-state-default-meta'>ID</div>
+  <div class='cellHead ui-corner-top ui-state-default-meta'>Date</div>
+  <div class='cellHead ui-corner-top ui-state-default-meta'>Source</div>
+  <div class='cellHead ui-corner-top ui-state-default-meta'>Samples</div>
+  <div class='tabCellSeparator'></div>
+  <div class='cellHead ui-corner-top ui-state-default'>Disease</div>
+  <div class='cellHead ui-corner-top ui-state-default'>Response Data</div>
+  <div class='cellHead ui-corner-top ui-state-default'>Survival Data</div>
+  <div class='cellHead ui-corner-top ui-state-default'>Subtype</div>
+  <div class='cellHead ui-corner-top ui-state-default'>Treatment</div>  
+ </div><!--tabHeader-->
+</div><!--idxTable-->
+
+ <div id='CharTab'>
+ </div> <!--CharTab -->
+{% endblock %}

@@ -1,0 +1,20 @@
+X (Done)- Use eUtils (http://www.ncbi.nlm.nih.gov/geo/info/geo_paccess.htmlhttp://www.ncbi.nlm.nih.gov/geo/info/geo_paccess.html) in a python function to add relative GDS (and maybe GPL?)
+- load the GSMs XML and make at least a div table of the Char data
+
+X (Done) Tissue --> Subtype
+X (Done) What is drug treatment?  
+
+- ** Inclusion criteria (e.g. node-negative, metastatic, early-stage, late-stage, etc, )
+
+- Specimen type (biopsy, FFPE, frozen tumor, microdissected, fine needle aspiration, etc.)
+X (Done) Microarray platform (GPL, or name if possible)
+X (Done) Submission (or public) date.
+X (Done)  Date the record was created in your database
+- Grade
+
+- In the list of data sets -- group metadata together, maybe color the header row a different color?
+
+X (Done) Link to GEO page
+- Link to characteristics table
+
+- Export options -- text or maybe Excel

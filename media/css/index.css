@@ -1,0 +1,195 @@
+#tabFilter{
+ margin:10;
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ height:30px;
+}
+
+#addFilter{
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ margin:10;
+ height:40px;
+ width:100px;
+}
+
+.spanFilt {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ background:#F5F5DC;
+ font-size:10px;
+ padding:5px;
+ margin-left:2px;
+ border: 1px solid;
+}
+
+.spanFilt a {
+ font-size:12px;
+}
+
+#filterContainer {
+ margin:10;
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:400px;
+ min-height:50px;
+ padding:5px;
+}
+
+#downloadTable {
+ margin-top:30px;
+ margin-left:30px;
+}
+
+#idxTable {
+ margin:10px;
+ display:block;
+ float:left;
+/*
+background-color:#eee;
+border:1px solid  #666666;
+border-spacing:5px;
+border-collapse:separate;*/
+}
+
+.ui-state-default-meta { 
+ border: 1px solid #a46e74 ; 
+ background: #a46e74 url(green-theme/images/ui-bg_glass_65_a46e74_1x400.png) 50% 50% repeat-x;
+ font-weight: normal; 
+ color: #ffffff; 
+}
+
+.cellHead {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:80px;
+ height:45px;
+ color:#000;
+ margin:1px;
+ font-size:11px;
+ text-align:center;
+ font-weight:bold;
+ line-height:20px;
+}
+
+.tabCell {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:80px;
+ height:35px;
+ border:1px solid;
+ margin:1px;
+ font-size:9px;
+ text-align:center;
+ line-height:35px;
+ vertical-align:middle;
+ overflow:hidden;
+}
+
+.subCell {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:15px;
+ height:35px;
+ margin-left:16px;
+ font-size:9px;
+ text-align:center;
+ line-height:35px;
+ vertical-align:middle;
+}
+
+.tabCell img {
+ height:15px;
+ margin-top:10px;
+ margin-bottom:10px;
+}
+
+.subCell img {
+
+}
+
+.tabCellSeparator {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:50px;
+ height:35px;
+}
+
+.tabHeader  {
+ display: table-row;
+ width:100%;
+}
+
+.tabRow  {
+ display: table-row;
+ width:100%;
+}
+
+.tabCellChar{
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:82px;
+ height:37px;
+ margin:1px;
+ font-size:9px;
+ text-align:center;
+ line-height:37px;
+ vertical-align:middle;
+ overflow:hidden;
+}
+
+.charTrigger {
+ height:35px;
+ width: 35px;
+ display:none;
+}
+
+#CharTab {
+ display:none;
+}
+
+#char_table {
+ margin:10px;
+ display:block;
+ float:left;
+ width:4000px;
+}
+
+.cellTitle {
+ float:left;/*fix for  buggy browsers*/
+ display:block;
+ width:120px;
+ height:45px;
+ overflow:hidden;
+ border:1px dotted;
+ margin:1px;
+ font-size:12px;
+ text-align:center;
+ background:#EEE8AA;
+}
+
+.cellTitle:hover {
+ background:#F0E68C;
+}
+
+.cell {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:120px;
+ height:35px;
+ border:1px dotted;
+ margin:1px;
+ font-size:12px;
+ overflow:hidden;
+ background-color:#E6E6FA;
+ text-align:center;
+}
+
+.tab_row  {
+ display: table-row;
+ width:100%;
+}
+
+.alias, .saved{
+ display:none;
+}

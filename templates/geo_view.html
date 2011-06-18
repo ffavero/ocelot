@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+  <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
+  <script type="text/javascript" src="/media/js/geo_view.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     view();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Dataset index
+{% endblock %}
+
+ {% block nav-home %}
+ <a id='nav-home' class='selected' href="/">Home</a>
+ {% endblock %}
+
+{% block contents %}
+
+<div id='viewTabs'>
+ <ul>
+  <li>
+   <a href='#DSmeta'>DSMeta</a>
+  </li>
+  <li>
+   <a href='#KMlines'>KMlines</a>
+  </li>
+ </ul>
+ <div id='DSmeta'>
+  <div id='DStitle' class='ui-corner-all'>
+   <i>PubMed ID </i><a class='PMlink' href='http://www.ncbi.nlm.nih.gov/pubmed/{{DS.pubmed}}' target='_blank'>link<a>.
+  </div><!--DStitle -->
+  <div id='GEOview' class='ui-corner-all'>
+   view Dataset on <a href='http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dataset_id}}' target='_blank'>GEO</a>
+  </div> <!-- GEOview -->
+  <div id='DSsumm' class='ui-corner-all'>
+  </div><!--DSsumm-->
+  <div id='GSEnGSM' class='ui-corner-all'>
+  </div>  <!-- GSEmGSM -->
+  <input type='image' id='viewChar'></input>
+ </div><!--DSmeta-->
+ <div id='KMlines'>
+  KMLines
+ </div> <!--KMLines-->
+</div> <!--viewTabs-->
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/help.css" />
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   function doAfter(time, f) {
+     setTimeout(f, time);
+   };
+
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Help
+{% endblock %}
+
+ {% block nav-help %}
+ <a id='nav-help' class='selected' href="/help/">Help</a>
+ {% endblock %}
+
+{% block contents %}
+Hi, still No docs.
+Sorry
+{% endblock %}

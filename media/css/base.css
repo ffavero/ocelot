@@ -1,0 +1,182 @@
+@import url('green-theme/jquery-ui-1.8.11.custom.css');
+
+.ui-widget {
+ font-size: 12px;
+}
+
+body,
+
+html {
+ margin:0;
+ padding:0;
+ color:#000;
+}
+
+#wrap {
+ /*margin-left:50px;
+ margin-right:50px;*/
+ margin:auto;
+ margin-top:5px;
+ margin-bottom:10px;
+ border-bottom:1px dashed;
+ max-width:1024px; 
+ min-width:880px;
+}
+
+#loadingDiv {
+ position:fixed;
+ display:none;
+ left:0;
+ top:0;
+ text-align:center;
+ width:100%;
+ height:100%;
+ z-index:2000;
+}
+
+#loadingMessage {
+ float:left;
+ z-index:2005;
+ height:150px;
+ width:300px;
+ margin-top: 30%;
+ margin-left:30%;
+ font-size:40px;
+ color:#000;
+ background:#A9A9A9;
+}
+
+#header {
+ height: 100px;
+ /*background-image:url('/media/css/img/headbg.png ');
+ background-repeat:repeat-x;*/
+}
+
+#titlehead {
+ float:left;
+ height: 100px;
+ width:350px;
+}
+
+#titlehead h1 {
+ float:left;
+ margin-left:40px;
+ margin-top:0;
+ font-family: Textile, cursive;
+ font-style: oblique;
+ font-variant: small-caps;
+ font-stretch: ultra-expanded;
+ font-size:40px;
+ font-weight: bold;
+ color:#a46e74;
+ height:40px;
+}
+
+#titlehead h2 {
+ float:left;
+ margin-left:70px;
+ margin-top:0px;
+ font-family: serif,serif;
+ font-style: oblique;
+ font-size:10px;
+ color:#000;
+}
+
+#nav {
+ float: right;
+ margin-right: 50px;
+ margin-top: 50px;
+ overflow: hidden;
+ position: relative; 
+ padding: .2em;
+ zoom: 1;
+}
+
+#nav ul {
+ overflow: hidden;
+ list-style: none;
+ float: left; 
+ position: relative; 
+ margin: 0 .2em 1px 0;
+ border-bottom: 0 !important;
+ padding: 0; 
+ white-space: nowrap; 
+}
+
+#nav li {
+ float: left;
+ height: 50px;
+ width: 120px;
+ background-image:url('/media/css/img/navlibg.png ');
+ background-repeat:no-repeat;
+ position: relative; 
+ margin: 0 .2em 1px 0;
+}
+
+#nav li a:link, #navigation li a:visited {
+ text-decoration: none;
+ cursor: pointer;
+ display: block;
+ height: 50px;
+ color: #000;
+ line-height: 50px;
+ padding: 0 9px 0 9px;
+ font-family: Textile, cursive;
+ font-size: 15px;
+ font-weight: bold;
+ text-align:center; 
+}
+
+#nav li a:hover {
+ background-image:url('/media/css/img/navlibghover.png ');
+ background-repeat:no-repeat;
+ color: #000;
+}
+
+#nav li a.selected {
+ background-image:url('/media/css/img/navlibgselect.png ');
+ background-repeat:no-repeat;
+ color: #fff;
+}
+
+#contents{
+ float:left;
+ display:block;
+ width:100%;
+ min-height:520px;
+ margin-bottom:10px;
+}
+
+#footer {
+ display:block;
+ margin: 0px;
+ border-top: 1px solid #000;
+ border-right:1px dotted;
+ clear:both;
+ height:70px;
+}
+
+#foottext {
+ display:inline;
+ float:left;
+ margin:10px;
+ height:30px;
+ padding:10px 30px 10px 30px;
+ width:75%;
+ text-align:center; 
+}
+
+#footer img { 
+ display:inline;
+ margin:10px;
+ width:50px;
+ height:50px;
+}
+
+#CBSlogo {
+ float:left;
+}
+
+#DTUlogo {
+ float: right;
+}
