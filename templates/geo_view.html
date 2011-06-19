@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
  {% block extahead %}
-  <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+  <script type="text/javascript" src="/media/js/underscore-min.js"></script>
   <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
   <script type="text/javascript" src="/media/js/geo_view.js"></script>
   <script type="text/javascript">
@@ -21,7 +21,7 @@
  {% endblock %}
 
 {% block title %}
-Dataset index
+ View/Analyze {{dictionary.dataset_id}}
 {% endblock %}
 
  {% block nav-home %}
@@ -29,31 +29,20 @@ Dataset index
  {% endblock %}
 
 {% block contents %}
+<div id='viewer_head'>
+ <div id='choose_plat' class='ui-round-all'>
+  {%for p in platforms%}
+   <li>
+    <a href='#' title='{{p.name}}'>{{p.platform_id}}</a>
+  </li>
+  {%endfor%}
+ </div><!--choose_plat-->
+ <div id='choose_gene'>
+  <div id='annot_column' class='ui-widget-content ui-corner-all'>
+  </div><!--annot_column-->
+  <input type='text' id='gene_id' title='Insert the gene identifier'/>
+  <div id='selected_chip'>Select a Microarray platfom to use</div>
+ </div><!--choose_gene-->
+</div><!--viewer_head-->
 
-<div id='viewTabs'>
- <ul>
-  <li>
-   <a href='#DSmeta'>DSMeta</a>
-  </li>
-  <li>
-   <a href='#KMlines'>KMlines</a>
-  </li>
- </ul>
- <div id='DSmeta'>
-  <div id='DStitle' class='ui-corner-all'>
-   <i>PubMed ID </i><a class='PMlink' href='http://www.ncbi.nlm.nih.gov/pubmed/{{DS.pubmed}}' target='_blank'>link<a>.
-  </div><!--DStitle -->
-  <div id='GEOview' class='ui-corner-all'>
-   view Dataset on <a href='http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dataset_id}}' target='_blank'>GEO</a>
-  </div> <!-- GEOview -->
-  <div id='DSsumm' class='ui-corner-all'>
-  </div><!--DSsumm-->
-  <div id='GSEnGSM' class='ui-corner-all'>
-  </div>  <!-- GSEmGSM -->
-  <input type='image' id='viewChar'></input>
- </div><!--DSmeta-->
- <div id='KMlines'>
-  KMLines
- </div> <!--KMLines-->
-</div> <!--viewTabs-->
 {% endblock %}

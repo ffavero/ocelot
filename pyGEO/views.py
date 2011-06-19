@@ -106,10 +106,16 @@ def DSview(request,dataset_id):
    '''
    View the Dataset and relative data
    '''
-   dataset = Dictionary.objects.raw("SELECT * FROM pyGEO_dictionary WHERE dataset_id = %s", [dataset_id])
-   if not dataset:
+   dictionary = list(Dictionary.objects.filter(dataset_id__exact = dataset_id))
+   if not dictionary:
       return HttpResponseRedirect('/')
-   payload = dict( dataset_id = dataset_id )
+   metainfo = MetaInfo.objects.get(dataset_id__exact = dataset_id)
+   platforms=[]
+   platform_list = metainfo.platform.split(',')
+   for p in platform_list:
+      platform = Platform.objects.get(platform_id__exact = p)
+      platforms.append(platform)
+   payload = dict( dictionary = dictionary[0] , platforms = platforms)
    return render_to_response('geo_view.html', payload)    
 
 def Dict2XML(request,dataset_id):

@@ -247,4 +247,61 @@ border-collapse:separate;*/
  width:100%;
 }
 
+#viewer_head{
+ float:left;
+ display:block;
+ width:100%;
+}
 
+#choose_plat {
+ margin:10px;
+ padding:5px;
+ float:left;
+ display:block;
+}
+
+.n_samples{
+ float:left;
+ display:block;
+ width:10px;
+ height:10px;
+ margin:0px;
+ background:red;
+}
+
+#choose_gene {
+ float:left;
+ display:block;
+ width:230px;
+ min-height:80px;
+}
+
+#annot_column {
+ float:left;
+ display:block;
+ margin:10px;
+ margin-right:0px;
+ margin-bottom:3px;
+ width:40px;
+ height:20px;
+ padding:5px;
+}
+
+#gene_id {
+ float:left;
+ display:block;
+ margin:10px;
+ margin-left:0px;
+ margin-bottom:3px;
+ width:150px;
+ height:32px;
+ padding:5px;
+}
+
+#selected_chip {
+ float:left;
+ display:block;
+ margin:10px;
+ margin-top:1px;
+ font-size: 12px;
+}
