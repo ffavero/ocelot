@@ -180,3 +180,8 @@ html {
 #DTUlogo {
  float: right;
 }
+
+#csv_form {
+ display:none;
+}
+

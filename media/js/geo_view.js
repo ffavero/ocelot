@@ -93,9 +93,12 @@ function loadAnnotation(gpl,longname) {
 
 function geodicttab(xml,dicttags) {
   dictTable = '';
- //We can parse the xml and start to populate the file 
- // with know tags from the Dictionary
+ // We can parse the xml and start to populate the file 
+ // with know tags from the Dictionary. Also while we parse 
+ // the file we add the number of samples for platform
  $(xml).find('Sample').each(function(){
+  var plat_ref = $(this).find('Platform-Ref').attr('ref');
+  $('#samples_'+plat_ref).text(parseInt($('#samples_'+plat_ref).text())+1);
   dictTable += "<div class='tab_row'>";
    dictTable += "<div class='cell'>" + $(this).attr('iid')+ "</div>";
    var tmptext = [];

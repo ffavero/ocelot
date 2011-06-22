@@ -29,11 +29,16 @@
  {% endblock %}
 
 {% block contents %}
+<form id='csv_form' method='post' action='/exportCSV/'>{% csrf_token %}
+    <input type='hidden' id='csv_download' name='csv_download' value=''/>
+    <input type='hidden' id='file_name' name='file_name' value=''/>
+</form>
+
 <div id='viewer_head'>
  <div id='choose_plat' class='ui-round-all'>
   {%for p in platforms%}
    <li>
-    <a href='#' title='{{p.name}}'>{{p.platform_id}}<div id='samples_{{p.platform_id}}' class='n_samples' title='number of samples'></div></a>
+    <a href='#' title='{{p.name}}'>{{p.platform_id}}<div id='samples_{{p.platform_id}}' class='n_samples' title='number of samples'>0</div></a>
   </li>
   {%endfor%}
  </div><!--choose_plat-->
