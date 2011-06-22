@@ -132,7 +132,7 @@ function applyFilter(xml) {
   function() {
    $('.charTrigger').attr({'disabled':'true'});
    $(this).attr({'src':'/media/css/img/loading.gif'});
-  $('.tabRow').unbind('mouseenter mouseleave'); 
+   $('.tabRow').unbind('mouseenter mouseleave');
    geoCharTable($(this).val());
   } 
  );
@@ -339,46 +339,68 @@ function xml2File (xml) {
 }
 
 function geoCharTable(dataset) {
-
  var res = [];
  $.ajax({
   url:'/geo/'+dataset+'/xml/',
+  type: 'get',
+  dataType:'xml',
+  async:true,
+  success: function(xml) {
+   geoCharTableShowUp(xml,dataset);
+  },
+  error: function() {
+   alert ("Sorry we could not get the file!");
+  }
+ });
+
+/* 
+ // Have to solve the CORS issues
+ // For the moment we will use the page 
+ // retrived and provided by the sarver side
+ $.ajax({
+  url:'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc='+dataset+'&form=xml&view=brief&targ=gsm',
   type: 'get',
   dataType:'xml',
   async:false,
   success: function(xml) {
    res = xml;
   }
- });
- attachTable(res,'char_table','CharTab');
+ });*/
+}
+
+function geoCharTableShowUp(xml,ds) {
+ attachTable(xml,'char_table','CharTab');
+ //refresh the main table to reset to default the icons
  applyFilter(xmlindex);
  $('#CharTab').dialog(
   {
-    title: 'Characteristics table of '+dataset,
-    width: 800,
-    height:400,
-    resizable:true,
-    modal:false,
-    buttons: {
-     Close : function() {
-          $( this ).dialog( 'close' );
-         },
-     'Downlad as CSV': function() {
-          var tmpCsv = '';
-          $('#char_table').find('.tab_row').each(function(){
-           $(this).find('div').each(function(){
-             tmpthis = $(this).text()
-             tmpCsv += tmpthis.replace(/\n/g,'')+'\t';
-           });
-           tmpCsv += '\n'
-          });
-          $('#csv_download').val(tmpCsv);
-          $('#file_name').val(dataset+'_char_table');
-          $('#csv_form').submit();
-         }
+   title: 'Characteristics table of '+ds,
+   width: 800,
+   height:400,
+   resizable:true,
+   modal:false,
+   buttons: {
+    Close: function() {
+         $( this ).dialog( 'close' );
+      },
+   'Downlad as CSV': function() {
+     var tmpCsv = '';
+     $('#char_table').find('.tab_row').each(function(){
+      $(this).find('div').each(function(){
+       tmpthis = $(this).text();
+       tmpCsv += tmpthis.replace(/\n/g,'')+'\t';
+      });
+      tmpCsv += '\n'
+     });
+     $('#csv_download').val(tmpCsv);
+     $('#file_name').val(ds+'_char_table');
+     $('#csv_form').submit();
     }
-   });
+   }
+ });
 }
+
+
 
 function geochartab(xml) {
  //Going over the XML once to retrive the possible tags

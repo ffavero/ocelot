@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
  {% block extahead %}
-  <script type="text/javascript" src="/media/js/underscore-min.js"></script>
+  <script type="text/javascript" src="/media/js/lib/underscore-min.js"></script>
   <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
   <script type="text/javascript" src="/media/js/geo_view.js"></script>
   <script type="text/javascript">
@@ -13,7 +13,7 @@
    $(document).ready(function() {
     $('#contents').css('display', 'none');
     doAfter(50,function () {
-     view();
+     view("{{dictionary.dataset_id}}");
     });
     $('#contents').fadeIn(600);
    });
@@ -33,7 +33,7 @@
  <div id='choose_plat' class='ui-round-all'>
   {%for p in platforms%}
    <li>
-    <a href='#' title='{{p.name}}'>{{p.platform_id}}</a>
+    <a href='#' title='{{p.name}}'>{{p.platform_id}}<div id='samples_{{p.platform_id}}' class='n_samples' title='number of samples'></div></a>
   </li>
   {%endfor%}
  </div><!--choose_plat-->
@@ -44,5 +44,23 @@
   <div id='selected_chip'>Select a Microarray platfom to use</div>
  </div><!--choose_gene-->
 </div><!--viewer_head-->
+
+<div id ='viewerButtons'>
+ <input type='image' id='viewDict' src='/media/css/img/table.png' title='Display available data for dataset'/>
+</div>
+<div id ='dictTable'>
+ <div id='dict_table'>
+  <div class='tab_row'>
+   <div class='cellTitle' title='GSM''>GSM</div>
+   {%for key, value in dictionary.items%}
+      {%if key != 'dataset_id' and key != 'id' %}
+         {%if value%}
+         <div class='cellTitle' title='{{value}}'>{{key}}</div>
+         {%endif%}
+      {%endif%}
+   {%endfor%}
+  </div>
+ </div><!--dict_table-->
+</div> <!--dictTable-->
 
 {% endblock %}

@@ -116,13 +116,15 @@ border-collapse:separate;*/
 }
 
 .tabHeader  {
- display: table-row;
- width:100%;
+ min-width:900px;
+ float:left;
+ display: block;
 }
 
-.tabRow  {
- display: table-row;
- width:100%;
+.tabRow  { 
+ min-width:900px;
+ float:left;
+ display: block;
 }
 
 .tabCellChar{

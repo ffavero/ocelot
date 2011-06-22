@@ -200,6 +200,10 @@
  display:none;
 }
 
+#dictTable {
+ display:none;
+}
+
 #char_table {
  margin:10px;
  display:block;
@@ -210,6 +214,13 @@ background-color:#eee;
 border:1px solid  #666666;
 border-spacing:5px;
 border-collapse:separate;*/
+}
+
+#dict_table {
+ margin:10px;
+ display:block;
+ float:left;
+ width:1024px;
 }
 
 .cellTitle {
@@ -255,18 +266,19 @@ border-collapse:separate;*/
 
 #choose_plat {
  margin:10px;
+ width:120px;
  padding:5px;
  float:left;
  display:block;
 }
 
 .n_samples{
- float:left;
+ float:right;
  display:block;
- width:10px;
- height:10px;
+ width:30px;
+ height:20px;
  margin:0px;
- background:red;
+ background:grey;
 }
 
 #choose_gene {
@@ -305,3 +317,18 @@ border-collapse:separate;*/
  margin-top:1px;
  font-size: 12px;
 }
+
+#viewerButtons {
+ float:left;
+ display:block;
+ margin:10px;
+}
+
+#viewDict {
+ float:left;
+ display:block;
+ margin:10px;
+ width:30px;
+ height:30px;
+}
+

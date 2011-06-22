@@ -12,6 +12,7 @@ import contextlib
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 import datetime
+from django.forms import model_to_dict
 
 @login_required(login_url='/accounts/login/')
 def admin(request):
@@ -115,7 +116,7 @@ def DSview(request,dataset_id):
    for p in platform_list:
       platform = Platform.objects.get(platform_id__exact = p)
       platforms.append(platform)
-   payload = dict( dictionary = dictionary[0] , platforms = platforms)
+   payload = dict( dictionary = model_to_dict(dictionary[0]) , platforms = platforms)
    return render_to_response('geo_view.html', payload)    
 
 def Dict2XML(request,dataset_id):
