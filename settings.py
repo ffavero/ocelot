@@ -100,4 +100,5 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
      'ocelot.main',
      'ocelot.pyGEO',
+     'ocelot.Platforms',
 )

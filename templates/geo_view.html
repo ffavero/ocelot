@@ -2,6 +2,7 @@
 
  {% block extahead %}
   <script type="text/javascript" src="/media/js/lib/underscore-min.js"></script>
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
   <link type="text/css" rel="stylesheet" href="/media/css/geo.css" />
   <script type="text/javascript" src="/media/js/geo_view.js"></script>
   <script type="text/javascript">
@@ -49,10 +50,20 @@
   <div id='selected_chip'>Select a Microarray platfom to use</div>
  </div><!--choose_gene-->
 </div><!--viewer_head-->
+ <div id ='viewerButtons'>
+  <input type='image' id='viewDict' src='/media/css/img/table.png' title='Display available data for dataset'/>
+  <div id='GEOview' class='ui-corner-all'>View dataset on <a href="http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dictionary.dataset_id}}" target="_blank" >GEO</a></div>
+  <div id='choose_analysis' class='ui-corner-all'>
+  </div><!--choose_analysis-->
+  <form id='send_tosocket' method='post' action='socket_client.php'>
+   <input type='hidden' id='data_json' name='data_json' value=''/>
+  </form>
+  <button type='button' id='do_analysis' title='Get results for selected gene'>Do it</button>
+ </div><!--viewerButtons-->
+<div id='results_viewer' class='ui-corner-all'>
 
-<div id ='viewerButtons'>
- <input type='image' id='viewDict' src='/media/css/img/table.png' title='Display available data for dataset'/>
-</div>
+</div><!--results_viewer-->
+
 <div id ='dictTable'>
  <div id='dict_table'>
   <div class='tab_row'>

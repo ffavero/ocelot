@@ -19,7 +19,6 @@ function view(dataset) {
    loadAnnotation($('#choose_plat').find('li').text(),$('#choose_plat').find('a').attr('title') );
   }
 
-
  //asyc call the xml to populate the Dictionary table:
  dictTags = [];
  $('#dictTable').find('.cellTitle').each( function() {
@@ -29,7 +28,7 @@ function view(dataset) {
   }
  );
  // style the hover action on the table button
- // and give him a proper onClick function
+ // and give it a proper onClick function
  $('#viewDict').hover(
   function() {
    $(this).attr({'src':'/media/css/img/tablehover.png'});
@@ -40,8 +39,7 @@ function view(dataset) {
  );
  $('#viewDict').click(
   function() {
-    $('#dictTable').dialog(
-  {
+    $('#dictTable').dialog({
    title: 'Clinical data for '+dataset,
    width: 800,
    height:400,
@@ -67,6 +65,7 @@ function view(dataset) {
    }
   })
  });
+ // Ok now call the xml
  $.ajax({
   url:'/geo/'+dataset+'/xml/',
   type: 'get',
@@ -74,13 +73,20 @@ function view(dataset) {
   async:true,
   success: function(xml) {
    dictDivTable = geodicttab(xml,dictTags);
-   //$('#dictTable').append(dictDivTable);
    $('#dict_table').append(dictDivTable);
   },
   error: function() {
    alert ("Sorry we could not get the clinical data!");
   }
- }); 
+ });
+ // set the style for the do_analysis button, disabled by default
+ $('#do_analysis').button({
+  icons: {
+   secondary: "ui-icon-triangle-1-e"
+  },
+  text: true,
+  disabled: true,
+ });
 }
 
 function loadAnnotation(gpl,longname) {
@@ -121,4 +127,35 @@ function geodicttab(xml,dicttags) {
  return dictTable;
 }
 
+function dictTabtoJSON (table,fields) {
+// Collect all the select field from the table
+// and put it in a dictionary-like object
+
+ results = new Object();
+ paths = [];
+ $('#'+table).find('.cellTitle').each( function(){
+  paths.push($(this).text());
+ });
+ $('#'+table).find('.tab_row').each(function(){
+  vat = sampleID = '';
+  $(this).find('.cell').each(function(index){
+      if (index == 0) {
+       sampleID = $(this).text();
+       results[sampleID] = new Object();
+      } else {
+       if ($.inArray(paths[index], fields) >= 0) {
+        // Clean a bit the text from spaces tabs...
+        tmptxt = $(this).text().replace(/\n/g,'');
+        tmptxt = tmptxt.replace(/\s/g,'');
+        tmptxt = tmptxt.replace(/\t/g,'');
+        results[sampleID][paths[index]] = new Object();
+        results[sampleID][paths[index]] = tmptxt;
+       }
+      }  
+  });
+ });
+// Return the Object in JSON, ready to be sended
+// to the server.
+ return JSON.stringify(results);
+}
 

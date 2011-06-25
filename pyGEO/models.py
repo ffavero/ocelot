@@ -1,10 +1,6 @@
 #from google.appengine.ext import db
 from django.db import models
 
-"""
-Objects to parse and save the various files 
-from GEO in the datastore, in a proper manner.
-"""
 
 class Dictionary(models.Model):
    """
@@ -36,10 +32,4 @@ class MetaInfo(models.Model):
    platform    = models.CharField(max_length=200,blank=True)
    saved       = models.DateField(auto_now=True,null=True)
    released    = models.DateField(null=True)
-   
-class Platform(models.Model):
-   """
-   GEO GPL platform ID and Information
-   """
-   platform_id = models.CharField(max_length=50)
-   name        = models.CharField(max_length=200)
+

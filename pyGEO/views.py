@@ -1,7 +1,8 @@
 from __future__ import with_statement
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
-from ocelot.pyGEO.models import Dictionary, MetaInfo, Platform
+from ocelot.pyGEO.models import Dictionary, MetaInfo
+from ocelot.Platforms.models import Platform
 from ocelot.main.models import Datasets
 from ocelot.pyGEO.utils import GEOdsParse, getGEOurl, doGSMtable, RegisterGSE, GPL2title, platformFreqs
 from ocelot.pyGEO import forms as geoforms
@@ -52,7 +53,7 @@ def DSparse(request,dataset_id):
    platforms = GPL2title(dataset_id)
    platform_list = []
    for platform in platforms:
-      plt = list(Platform.objects.raw("SELECT * FROM pyGEO_platform WHERE platform_id = %s", [platform['id']]))
+      plt = list(Platform.objects.raw("SELECT * FROM Platforms_platform WHERE platform_id = %s", [platform['id']]))
       if not plt:
          plt = Platform(platform_id = platform['id'], name = platform['title'] )
          plt.save()

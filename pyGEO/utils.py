@@ -1,5 +1,6 @@
 from __future__ import with_statement
-from ocelot.pyGEO.models import Dictionary, MetaInfo, Platform
+from ocelot.pyGEO.models import Dictionary, MetaInfo
+from ocelot.Platforms.models import Platform
 from ocelot.main.models import Datasets
 from django.http import HttpResponseRedirect, HttpResponse
 from django.utils import simplejson
