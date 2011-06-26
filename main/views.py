@@ -25,7 +25,7 @@ def export_csv(request):
    '''
    Create the HttpResponse object with the appropriate CSV header.
    '''
-   data = 'None'
+   data = None
    if request.method == 'POST':
       data = request.POST
    response = HttpResponse(data['csv_download'], content_type='text/plain')

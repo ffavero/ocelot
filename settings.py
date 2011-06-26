@@ -101,4 +101,5 @@ INSTALLED_APPS = (
      'ocelot.main',
      'ocelot.pyGEO',
      'ocelot.Platforms',
+     'ocelot.pySurv'
 )

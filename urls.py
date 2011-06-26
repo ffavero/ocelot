@@ -21,5 +21,6 @@ urlpatterns = patterns('',
    (r'^geo/(?P<dataset_id>[^/]+)/$','ocelot.pyGEO.views.DSview'),
    (r'^geo/(?P<dataset_id>[^/]+)/xml/$','ocelot.pyGEO.utils.geoXml'),
    (r'^help/$', 'ocelot.main.views.help'),
-   (r'^exportCSV/$', 'ocelot.main.views.export_csv'),   
+   (r'^exportCSV/$', 'ocelot.main.views.export_csv'),
+   (r'^microarrpy/$', 'ocelot.pySurv.views.analyze'),
 )

@@ -10,9 +10,10 @@ from urllib2 import urlopen, Request
 from urllib import urlencode
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
-import contextlib, bz2, gzip, re
+import contextlib, bz2, gzip, re, os, io
 from django.contrib.auth.decorators import login_required
 from StringIO import StringIO
+from settings import ROOT_PATH
 
 def getGEOurl(acc,purpose):
    '''
@@ -290,8 +291,17 @@ def getGEOexpr(acc,filename):
 
 def geoXml(request,dataset_id):
    '''
-   retrieve the xml fle from geo
+   Check if the file is alredy been downloaded,
+   if not retrieve the xml from geo
    '''
-   req = getGEOurl(dataset_id,'data')
-   with contextlib.closing(urlopen(req)) as geo:
-      return HttpResponse(geo.read(),mimetype="text/xml")
+   filename = ROOT_PATH +'/data/gsms/' + dataset_id + '_gsms.xml'
+   if os.path.isfile(filename):
+      with contextlib.closing(open(filename,'r')) as geo:
+         return HttpResponse(geo.read(),mimetype="text/xml")
+   else:
+      req = getGEOurl(dataset_id,'data')
+      with contextlib.closing(urlopen(req)) as geo:
+         tmp = geo.read()
+      with contextlib.closing(open(filename,'w')) as filein:
+         filein.write(str(tmp))
+      return HttpResponse(str(tmp),mimetype="text/xml")
