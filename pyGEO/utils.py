@@ -248,8 +248,8 @@ def get_express(acc):
 
 def getGEOexpr(acc,filename):
    geoDATAurl = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/' + acc + '/'
-   outPATH = 'datasets/'
-   outFILE = outPATH + filename[:-3] +'.bz2'
+   outPATH = '/data/expressions/'
+   outFILE = ROOT_PATH + outPATH + filename[:-3] +'.bz2'
    print 'downloading ' + geoDATAurl + filename
    with contextlib.closing(urlopen(geoDATAurl + filename)) as serie_matrix:
       print 'Done downloading...'
