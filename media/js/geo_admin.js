@@ -1,6 +1,19 @@
 
 
 function initGEO() {
+ $('#loading').ajaxStart(function(){
+   $(this).fadeIn();
+   $(window).resize(function () {
+    $(this).width($(document).width());
+    $(this).height($(document).height());
+   });
+ });
+ $('#loading').ajaxStop(function(){
+      $(this).fadeOut();
+ });
+ $('#loading').ajaxError(function(){
+      $(this).fadeOut();
+ });
 
  //add hover states on the static buttons
  $('.ui-button').hover(
@@ -20,19 +33,6 @@ function initGEO() {
  $('#addDS').button({
   icons: {
    primary: 'ui-icon-circle-plus',
-  }
- });
-
- $('#savedict').button({
-  icons: {
-   primary: 'ui-icon-disk',
-   secondary: 'ui-icon-circle-check'
-  }
- });
- 
- $('#backToList').button({
-  icons: {
-   primary: 'ui-icon-circle-triangle-w',
   }
  });
 
@@ -67,7 +67,6 @@ function addDS() {
   resizable : false,
   buttons: {
    Add : function(){
-    spinnerON();
     var text = $('textarea#DSin').val();
     text = text.replace(/[^a-z|0-9]/ig,'');
     text = text.replace(/GDS/ig,'\nGDS');
@@ -76,8 +75,7 @@ function addDS() {
     text = text.split('\n');
     var dslist = JSON.stringify(text)
     //alert(dslist);
-     $.post('/admin/geo/addDS/',dslist, function(){alert("Data Saved")},'json');
-    spinnerOFF();
+    $.post('/admin/geo/addDS/',dslist, function(){alert("Data Saved")},'json');
     $(this).dialog("close");
     location.reload();
    }
@@ -105,15 +103,11 @@ function removeDS(dataset) {
  })
 };
 
-function spinnerON() {
- $('#loadingDiv').css('display', 'block');
-};
-
-function spinnerOFF() {
- $('#loadingDiv').css('display', 'none');
-};
-
 function goToGSE(gse) {
- spinnerON();
+ $('#loading').fadeIn();
+ $(window).resize(function () {
+  $('#loading').width($(document).width());
+  $('#loading').height($(document).height());
+ });
  window.location='/admin/geo/'+gse+'/';
 }

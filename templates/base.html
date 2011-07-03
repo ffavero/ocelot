@@ -35,11 +35,16 @@
       
    </div> <!-- header -->
    <div id="contents">
-   <div id='loadingDiv'>
-    <div id='loadingMessage' class='ui-corner-all'>
-     <p><img src='/media/css/img/loading.gif' /></br> Please Wait</p>
-    </div>
-   </div><!--loadingDiv-->    
+
+ <div id='loading' class='ui-overlay'>
+  <div id='waiting_warn' class='ui-corner-all ui-state-highlight '><p>
+   <span class='ui-icon ui-icon-info'></span>
+   <strong>Please Wait</strong> while loading<img src='/media/css/img/loading.gif' /> </p>
+  </div><!--waiting_warn-->
+  <div id='overlay' class='ui-widget-overlay'>
+  </div>
+ </div> <!--loading -->
+   
   {% block contents %}
    
   {% endblock %}

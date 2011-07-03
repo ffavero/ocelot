@@ -1,6 +1,19 @@
 function index() {
- var atucompTxt = new Array;
+ $('#loading').ajaxStart(function(){
+   $(this).fadeIn();
+   $(window).resize(function () {
+    $(this).width($(document).width());
+    $(this).height($(document).height());
+   });
+ });
+ $('#loading').ajaxStop(function(){
+      $(this).fadeOut();
+ });
+ $('#loading').ajaxError(function(){
+      $(this).fadeOut();
+ });
 
+ var atucompTxt = new Array;
  $(xmlindex).find('object').each(function(index) {
   $(this).find('field').each(function(index) { 
    commaSplit = $(this).text().split(',');

@@ -1,10 +1,18 @@
 
 
 function initGEO() {
- $('#addDS').button({
-  icons: {
-   primary: 'ui-icon-circle-plus',
-  }
+ $('#loading').ajaxStart(function(){
+   $(this).fadeIn();
+   $(window).resize(function () {
+    $(this).width($(document).width());
+    $(this).height($(document).height());
+   });
+ });
+ $('#loading').ajaxStop(function(){
+      $(this).fadeOut();
+ });
+ $('#loading').ajaxError(function(){
+      $(this).fadeOut();
  });
 
  $('#savedict').button({
@@ -14,20 +22,14 @@ function initGEO() {
   }
  });
 
- $('.GSEremove').button({
-  icons: {
-   text: false, 
-   primary: 'ui-icon-minus',
-  }
+ $('#savedict').click(function(){
+   $('#loading').fadeIn();
+   $(window).resize(function () {
+    $('#loading').width($(document).width());
+    $('#loading').height($(document).height());
+   });
  });
 
- $('.GSEgoTo').button({
-  icons: {
-   text: false, 
-   primary: 'ui-icon-circle-zoomin',
-  }
- });
- 
  $('#backToList').button({
   icons: {
    primary: 'ui-icon-circle-triangle-w',

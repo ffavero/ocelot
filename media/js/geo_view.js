@@ -22,6 +22,20 @@ function view(dataset) {
   }
  });
 
+ $('#loading').ajaxStart(function(){
+   $(this).fadeIn();
+   $(window).resize(function () {
+    $(this).width($(document).width());
+    $(this).height($(document).height());
+   });
+ });
+ $('#loading').ajaxStop(function(){
+      $(this).fadeOut();
+ });
+ $('#loading').ajaxError(function(){
+      $(this).fadeOut();
+ });
+
  // Bind an event when select 
  // an item from the menu
  $('#annot_column').change(function() {
@@ -47,7 +61,7 @@ function view(dataset) {
    $('#choose_plat').find('li').addClass('ui-state-active ui-corner-all');
    selPlatform = $('#choose_plat').find('.ui-state-active').clone();
    $(selPlatform).find('div').remove();
-   doAfter(300, function () {
+   doAfter(1000, function () {
    loadAnnotation($(selPlatform).text().replace(/\s/g,''),$('#choose_plat').find('a').attr('title'));
    });
  }
@@ -132,9 +146,9 @@ function loadAnnotation(acc,longname) {
  $.ajax({
   url:'/annotation/',
   type: 'post',
+  async:true,
   data: {gpl : acc},
   dataType:'json',
-  async:true,
   success: function(json) {
    //set the annotation in the page
    jsonAnnot = json;
