@@ -10,7 +10,7 @@ from urllib2 import urlopen, Request
 from urllib import urlencode
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
-import contextlib, bz2, gzip, re, os, io
+import contextlib, bz2, gzip, re, os, io, zlib
 from django.contrib.auth.decorators import login_required
 from StringIO import StringIO
 from settings import ROOT_PATH
@@ -247,46 +247,42 @@ def get_express(acc):
          getGEOexpr(acc,series_file)
 
 def getGEOexpr(acc,filename):
-   geoDATAurl = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/' + acc + '/'
-   outPATH = '/data/expressions/'
-   outFILE = ROOT_PATH + outPATH + filename[:-3] +'.bz2'
-   print 'downloading ' + geoDATAurl + filename
-   with contextlib.closing(urlopen(geoDATAurl + filename)) as serie_matrix:
-      print 'Done downloading...'
-      print serie_matrix.info().gettype()
-      if serie_matrix.info().gettype() == 'text/plain':
-         f_buffer = StringIO(serie_matrix.read())
-         ftmp = gzip.GzipFile(fileobj=f_buffer)
-         print 'Parsing...'
-         switch = 'OFF'
-         f = bz2.BZ2File(outFILE, 'w')
-         find_start = re.compile('!series_matrix_table_begin')
-         for line in ftmp:
-            if re.search('!series_matrix_table_end',line):
-               switch = 'OFF'
-               print 'End of File'
-            if switch == 'ON':
-               if line.startswith('"ID_REF"'):
-                  f.write(line.replace('\"',''))
-               else:
-                  probe  = line.split('\t')[0]
-                  expr = line.split('\t')[1:]
-                  probe  = probe.replace('\"','')
-                  line_tmp = []
-                  for num in expr:
-                     try:
-                        num = str(round(float(num),2))
-                     except:
-                        num = str(None)
-                     line_tmp.append(num)
-                  line_tmp = '\t'.join(line_tmp)
-                  line = probe+'\t'+line_tmp+'\n'
-                  f.writelines(line)
-            if find_start.match(line):
-               switch = 'ON' 
-         f.close()
-         ftmp.close()
-         f_buffer.close()
+   geo_expr_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/' + acc + '/' + filename
+   out_path = '/data/expressions/'
+   out_file = ROOT_PATH + out_path + filename
+   print 'downloading ' + geo_expr_url
+   find_start = re.compile('!series_matrix_table_begin')
+   switch = 'OFF'
+   tmp = ''
+   with contextlib.closing(urlopen(geo_expr_url)) as serie_matrix:
+      with contextlib.closing(StringIO(serie_matrix.read())) as fbuffer:
+         with contextlib.closing(gzip.GzipFile(fileobj=fbuffer)) as unzipped:
+            for line in unzipped.readlines():
+               if re.search('!series_matrix_table_end',line):
+                  switch = 'OFF'
+                  print 'End of File'
+               if switch == 'ON':
+                  if line.startswith('"ID_REF"'):
+                     tmp += line.replace('\"','')
+                  else:
+                     line  = line.strip().split('\t')
+                     probe = line[0]
+                     expr  = line[1:]
+                     probe  = probe.replace('\"','')
+                     for index,num in enumerate(expr):
+                       try:
+                          expr[index] = str(round(float(num),2))
+                       except ValueError:
+                          expr[index] = 'NA'
+                     expr = '\t'.join(expr)
+                     line = probe + '\t' + expr + '\n'
+                     tmp += line
+               if switch == 'OFF':
+                  if find_start.match(line):
+                     switch = 'ON'
+   with contextlib.closing(gzip.GzipFile(out_file,'wb')) as outfile:
+      with contextlib.closing(StringIO(tmp)) as shorter:
+         outfile.write(shorter.read())   
    print 'Done\n'
 
 def geoXml(request,dataset_id):
@@ -294,14 +290,14 @@ def geoXml(request,dataset_id):
    Check if the file is alredy been downloaded,
    if not retrieve the xml from geo
    '''
-   filename = ROOT_PATH +'/data/gsms/' + dataset_id + '_gsms.xml'
+   filename = ROOT_PATH +'/data/gsms/' + dataset_id + '_gsms.xml.gz'
    if os.path.isfile(filename):
-      with contextlib.closing(open(filename,'r')) as geo:
+      with contextlib.closing(gzip.GzipFile(filename,'rb')) as geo:
          return HttpResponse(geo.read(),mimetype="text/xml")
    else:
       req = getGEOurl(dataset_id,'data')
       with contextlib.closing(urlopen(req)) as geo:
          tmp = geo.read()
-      with contextlib.closing(open(filename,'w')) as filein:
+      with contextlib.closing(gzip.GzipFile(filename,'wb')) as filein:
          filein.write(str(tmp))
       return HttpResponse(str(tmp),mimetype="text/xml")

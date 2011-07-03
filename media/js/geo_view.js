@@ -1,5 +1,32 @@
-
 function view(dataset) {
+// Get the CSRF Token and send it whithin the ajax calls
+ $('html').ajaxSend(function(event, xhr, settings) {
+  function getCookie(name) {
+   var cookieValue = null;
+   if (document.cookie && document.cookie != '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+     var cookie = jQuery.trim(cookies[i]);
+     // Does this cookie string begin with the name we want?
+     if (cookie.substring(0, name.length + 1) == (name + '=')) {
+      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+      break;
+     }
+    }
+   }
+   return cookieValue;
+  }
+  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+   // Only send the token to relative URLs i.e. locally.
+   xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+  }
+ });
+
+ // Bind an event when select 
+ // an item from the menu
+ $('#annot_column').change(function() {
+  annotAutocomplete(jsonAnnot,$(this).val())
+ });
  $('#choose_plat').menu({
     selected: function(event, ui) {
      //remove the style of previously selected item, if any.
@@ -9,15 +36,21 @@ function view(dataset) {
      // set a different style to the selected item
      ui.item.addClass('ui-state-active ui-corner-all');
      // do something
-     loadAnnotation(ui.item.text(),ui.item.find('a').attr('title'))
+     selPlatform = ui.item.clone();
+     $(selPlatform).find('div').remove();
+     loadAnnotation($(selPlatform).text().replace(/\s/g,''),ui.item.find('a').attr('title'));
     }
    });
   // If there is only one platform set it automatically:
   var platformNumber = $('#choose_plat > li').size();
-  if (platformNumber ==1 ){
+  if (platformNumber ==1 ) {
    $('#choose_plat').find('li').addClass('ui-state-active ui-corner-all');
-   loadAnnotation($('#choose_plat').find('li').text(),$('#choose_plat').find('a').attr('title') );
-  }
+   selPlatform = $('#choose_plat').find('.ui-state-active').clone();
+   $(selPlatform).find('div').remove();
+   doAfter(300, function () {
+   loadAnnotation($(selPlatform).text().replace(/\s/g,''),$('#choose_plat').find('a').attr('title'));
+   });
+ }
 
  //asyc call the xml to populate the Dictionary table:
  dictTags = [];
@@ -91,36 +124,77 @@ function view(dataset) {
  $('#do_analysis').click(function() {
   doItbutton(dataset);
  });
-
-// Get the CSRF Token and send it whithin the ajax calls
- $('html').ajaxSend(function(event, xhr, settings) {
-  function getCookie(name) {
-   var cookieValue = null;
-   if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-     var cookie = jQuery.trim(cookies[i]);
-     // Does this cookie string begin with the name we want?
-     if (cookie.substring(0, name.length + 1) == (name + '=')) {
-      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-      break;
-     }
-    }
-   }
-   return cookieValue;
-  }
-  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-   // Only send the token to relative URLs i.e. locally.
-   xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-  }
- });
 }
 
-function loadAnnotation(gpl,longname) {
+function loadAnnotation(acc,longname) {
  // load annotation file and then set it
  // to be used in the autocomplete
+ $.ajax({
+  url:'/annotation/',
+  type: 'post',
+  data: {gpl : acc},
+  dataType:'json',
+  async:true,
+  success: function(json) {
+   //set the annotation in the page
+   jsonAnnot = json;
+   // Empty the existing options
+   // in the menu
+   $('#annot_column').empty();
+   // take the first node and
+   // collect the keys to put 
+   // in the annotation menu
+   $.each(json, function(item,values){
+    $.each(values, function(key,value) {
+     $('#annot_column').append($("<option></option>").
+          attr("value",key).
+          text(key));
+    });
+    return false 
+   });
+   // Set the default value for the 
+   // annotation to pick
+   $('#annot_column').val('Gene symbol');
+   annotAutocomplete(json,$('#annot_column').val());
+  },
+  error: function() {
+   $('#annot_column').empty();
+   alert ("Sorry, we could not load this annotation");
+  }
+ });
  $('#selected_chip').html('<b>Using platform:</b></br>'+longname);
- $('#choose_gene').autocomplete();
+}
+
+function annotAutocomplete(json,annot) {
+ // Traversing the JSON file
+ autocompleteAnnot = [];
+ jsonTMP  = new Object();
+ $.each(json, function(item,values) {
+  $.each(values, function(key,value){
+   if (key == annot) {
+    if (jsonTMP[value]) {
+     jsonTMP[value].push(item);
+    } else {
+     jsonTMP[value] = [];
+     jsonTMP[value].push(item);
+    } 
+    autocompleteAnnot.push(value);
+   }
+  })
+ });
+ level = 3;
+ var re=/Platform/g;
+ if (annot.match(re)) {
+  level = 9;
+ };
+ autocompleteAnnot = _.unique(autocompleteAnnot);
+ $('#gene_id').autocomplete({
+  minLength: level,
+  source : autocompleteAnnot,
+  select: function(event, ui){
+   alert(jsonTMP[ui.item.value])
+  },
+ });
 }
 
 function geodicttab(xml,dicttags) {
@@ -212,12 +286,12 @@ function doItbutton (dataset) {
    data_json : dataJSON,
    file_code : filename,
    id_ref : idRef,
-   test : '',
+   test : 'kmlines',
    format: 'png'
   },
   type: 'post',
   dataType:'html',
-  async:false,
+  async:true,
   success: function(res) {
    $('#results_viewer').empty();
    $('#results_viewer').append(res);

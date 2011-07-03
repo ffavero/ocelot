@@ -10,7 +10,7 @@
    doAfter = function(time, f) {
      setTimeout(f, time);
    };
-
+   jsonAnnot = [];
    $(document).ready(function() {
     $('#contents').css('display', 'none');
     doAfter(50,function () {
@@ -44,8 +44,8 @@
   {%endfor%}
  </div><!--choose_plat-->
  <div id='choose_gene'>
-  <div id='annot_column' class='ui-widget-content ui-corner-all'>
-  </div><!--annot_column-->
+  <select id='annot_column' class='ui-widget-content ui-corner-all'>
+  </select><!--annot_column-->
   <input type='text' id='gene_id' title='Insert the gene identifier'/>
   <div id='selected_chip'>Select a Microarray platfom to use</div>
  </div><!--choose_gene-->

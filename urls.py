@@ -23,4 +23,5 @@ urlpatterns = patterns('',
    (r'^help/$', 'ocelot.main.views.help'),
    (r'^exportCSV/$', 'ocelot.main.views.export_csv'),
    (r'^microarrpy/$', 'ocelot.pySurv.views.analyze'),
+   (r'^annotation/$', 'ocelot.Platforms.views.view_annot'),
 )
