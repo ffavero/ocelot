@@ -98,7 +98,11 @@ function initGEO() {
   });
  } else {
   $('#viewChar').attr({ 'src' : '/media/css/img/table.png' })
-
+  var clumncount = 0;
+  $('#char_table').find('.cellTitle').each(function(){
+   clumncount = clumncount + 1;
+  });
+  $('#char_table').css({'width': 20 + (clumncount*125) });
   $('#viewChar').hover(
    function (){ 
     $('#viewChar').attr({ 'src' : '/media/css/img/tablehover.png' });

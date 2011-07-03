@@ -247,9 +247,13 @@ function dictTabtoJSON (fields) {
 
  results = new Object();
  paths = [];
+ clumncount = 0;
+
  $('#dict_table').find('.cellTitle').each( function(){
   paths.push($(this).text());
+  clumncount = clumncount + 1;
  });
+ $('#dict_table').css({'width': 20 + (clumncount*125) });
  $('#dict_table').find('.tab_row').each(function(){
   vat = sampleID = '';
   $(this).find('.cell').each(function(index){

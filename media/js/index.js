@@ -383,6 +383,11 @@ function geoCharTable(dataset) {
 
 function geoCharTableShowUp(xml,ds) {
  attachTable(xml,'char_table','CharTab');
+ clumncount = 0;
+ $('#char_table').find('.cellTitle').each(function(){
+  clumncount = clumncount + 1;
+ });
+ $('#char_table').css({'width': 20 + (clumncount*125) })
  //refresh the main table to reset to default the icons
  applyFilter(xmlindex);
  $('#CharTab').dialog(
