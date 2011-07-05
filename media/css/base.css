@@ -148,7 +148,8 @@ html {
 #contents{
  float:left;
  display:block;
- width:100%;
+ width:100%; 
+ min-width:800px; 
  min-height:520px;
  margin-bottom:10px;
 }

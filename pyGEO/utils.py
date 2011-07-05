@@ -72,6 +72,11 @@ def GEOdsParse(f):
    return results
 
 def doGSMtable(gsms,tag):
+   '''
+   Take some xml from NCBI and build the Char
+   table (still to be improve... look at the 
+   javascript version)
+   '''
    NS = '//{http://www.ncbi.nlm.nih.gov/geo/info/MINiML}'
    tagname = NS + tag
    with contextlib.closing(urlopen(getGEOurl(gsms[0],'data'))) as GSMfirst:

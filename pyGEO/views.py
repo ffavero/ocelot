@@ -43,7 +43,7 @@ def DSparse(request,dataset_id):
    client side with JavaSrcipt
    '''
    dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))
-   metainfo = list(MetaInfo.objects.filter(dataset_id = dataset_id))
+   metainfo   = list(MetaInfo.objects.filter(dataset_id = dataset_id))
    if not dictionary:
       return HttpResponseRedirect('/admin/geo/')
    else:
@@ -53,15 +53,13 @@ def DSparse(request,dataset_id):
    platforms = GPL2title(dataset_id)
    platform_list = []
    for platform in platforms:
-      plt = list(Platform.objects.raw("SELECT * FROM Platforms_platform WHERE platform_id = %s", [platform['id']]))
-      if not plt:
-         plt = Platform(platform_id = platform['id'], name = platform['title'] )
-         plt.save()
       platform_list.append(platform['id'])
    metainfo.platform = ",".join(platform_list)
+   # Collect the metainfo to pass to the
+   # Autocomplete
    treatments = []
-   subtypes  = []
-   diseases  = []
+   subtypes   = []
+   diseases   = []
    for dataset in datasets:
       treatments.append(dataset.treatment)
       diseases.append(dataset.disease)
@@ -69,12 +67,10 @@ def DSparse(request,dataset_id):
    treatments = simplejson.dumps(treatments)
    subtypes   = simplejson.dumps(subtypes)
    diseases   = simplejson.dumps(diseases)
-
    req = getGEOurl(dataset_id,'meta')
-   '''url = req.get_full_url() + '?' + req.get_data()'''
    with contextlib.closing(urlopen(req)) as geo:
       DS = GEOdsParse(geo)
-   acc = DS['accessions'].split()
+   acc = DS['accessions'].split(' ')
    for a in acc:
       if not a.startswith('GSM'):
          acc.remove(a)
@@ -86,7 +82,7 @@ def DSparse(request,dataset_id):
    acclen = len(acc)
    doGSMtable.needs_autoescape = True
    GSMtable = doGSMtable(acc[0:3],'Characteristics')
-   
+   # Form part:
    if request.method == 'GET':
       dictform = geoforms.GEOForm(instance=dictionary)
       metaform = geoforms.GEOMetaForm(instance=metainfo)
@@ -96,9 +92,14 @@ def DSparse(request,dataset_id):
       if dictform.is_valid() and metaform.is_valid():
          dictform.save()
          metaform.save()
-         dictionary = list(Dictionary.objects.raw("SELECT * FROM pyGEO_dictionary WHERE dataset_id = %s", [dataset_id]))[0]
-         metainfo = list(MetaInfo.objects.raw("SELECT * FROM pyGEO_metainfo WHERE dataset_id = %s", [dataset_id]))[0]
+         dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]
+         metainfo   = list(MetaInfo.objects.filter(dataset_id = dataset_id))[0]
          metainfo.samples_count = acclen
+         for platform in platforms:
+            plt = list(Platform.objects.filter(platform_id = platform['id']))
+            if not plt:
+               plt = Platform(platform_id = platform['id'], name = platform['title'] )
+               plt.save()
          RegisterGSE(dictionary,metainfo)
          return HttpResponseRedirect('/admin/geo/')
    payload = dict(platforms=platforms, dictform=dictform, metaform=metaform, DS=DS, GSMtable=GSMtable, dataset_id=dataset_id, acclen=acclen, treatments=treatments, diseases=diseases, subtypes=subtypes)
