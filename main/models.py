@@ -25,4 +25,17 @@ class Datasets(models.Model):
    alias_gds     = models.CharField(max_length=50)
    platform_id   = models.CharField(max_length=50)
    platform_name = models.CharField(max_length=200)
-   
+
+class Ocelotqueue(models.Model):
+   '''
+   A place to write the process running in the background
+   In case of failuse notice that the process have fail and
+   avoid the multiple request of the same action
+   '''
+   process_id   = models.CharField(max_length=50)
+   function     = models.CharField(max_length=50)
+   argument     = models.CharField(max_length=50)
+   status       = models.CharField(max_length=50)
+   date_stored  = models.DateField()
+   date_start   = models.DateField()
+   date_end     = models.DateField()

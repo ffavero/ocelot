@@ -19,12 +19,28 @@
        $('#GEOadmin').attr({ 'src' : '/media/css/img/geo_logo.png' });
       }
      )
+     $('#PlatformAdmin').hover(
+      function() {
+       $('#PlatformAdmin').attr({ 'src' : '/media/css/img/platforms_hover.png' });
+      },
+      function() {
+       $('#PlatformAdmin').attr({ 'src' : '/media/css/img/platforms.png' });
+      }
+     )
      $('#restoreBKP').hover(
       function() {
        $('#restoreBKP').attr({ 'src' : '/media/css/img/backuphover.png' });
       },
       function() {
        $('#restoreBKP').attr({ 'src' : '/media/css/img/backup.png' });
+      }
+     )
+     $('#appAdmin').hover(
+      function() {
+       $('#appAdmin').attr({ 'src' : '/media/css/img/django_hover.png' });
+      },
+      function() {
+       $('#appAdmin').attr({ 'src' : '/media/css/img/django.png' });
       }
      )
     });
@@ -43,7 +59,8 @@ Ocelot admin
 
 {% block contents %}
 
-<input type='image' src='/media/css/img/geo_logo.png' onclick="window.location.replace('geo/')" id='GEOadmin'/>
-<input type='image' src='/media/css/img/backup.png' onclick="window.location.replace('geo/')" id='restoreBKP'/>
-
+<input type='image' src='/media/css/img/geo_logo.png' onclick="window.location.replace('/admin/geo/')" title='Manage the content of the GEO dataset' id='GEOadmin'/>
+<input type='image' src='/media/css/img/platforms.png' onclick="window.location.replace('/admin/chip/')" title='Managed/Install microarray platforms annotations' id='PlatformAdmin'/>
+<input type='image' src='/media/css/img/backup.png' onclick="window.location.replace('/admin/geo/')" title='Backup/Restore' id='restoreBKP'/>
+<input type='image' src='/media/css/img/django.png' onclick="window.location.replace('/appadmin/')" title='Application users admin task' id='appAdmin'/>
 {% endblock %}

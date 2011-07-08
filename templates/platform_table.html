@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/chip.css" />
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
+  <script type="text/javascript" src="/media/js/platform_admin.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     PlatformTable("{{platform_id}}");
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Ocelot Platforms admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+
+ <div id='platforms_panel'>
+  <button type='button' id='backToList' onclick="window.location.replace('/admin/chip/')">Back to platforms list</button> 
+  <div id='platform_column_def'>
+   <div id='little_comment' class='ui-corner-all ui-state-highlight'>
+    <span class="ui-icon ui-icon-info"></span>
+    <p>
+     Select by clicking on the header cell the column to include in the annotation file. </br>
+     <strong>Carefull</strong> that too much columns will results in a big file to load each time.
+    </p>
+   </div>
+   <div id='id_good_list' class='ui-corner-all ui-widget-content'>
+   </div>
+   <div id='store_it'>
+    <button id='get_annotation_file' type='button'>Store the annotation file</button>
+   </div>
+  </div><!--platform_column_def-->
+  <div id='platform_table'></div>
+ </div><!--platforms_panel-->
+{% endblock %}

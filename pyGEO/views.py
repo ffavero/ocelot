@@ -4,15 +4,15 @@ from django.shortcuts import render_to_response
 from ocelot.pyGEO.models import Dictionary, MetaInfo
 from ocelot.Platforms.models import Platform
 from ocelot.main.models import Datasets
-from ocelot.pyGEO.utils import GEOdsParse, getGEOurl, doGSMtable, RegisterGSE, GPL2title, platformFreqs
+from ocelot.pyGEO.utils import GEOdsParse, getGEOurl, doGSMtable, RegisterGSE, GPL2title, platformFreqs, get_express
 from ocelot.pyGEO import forms as geoforms
 from django.http import HttpResponseRedirect, HttpResponse
 from django.utils import simplejson
 from urllib2 import urlopen
-import contextlib
+import contextlib, datetime
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-import datetime
+from multiprocessing import Process 
 from django.forms import model_to_dict
 
 @login_required(login_url='/accounts/login/')
@@ -90,6 +90,12 @@ def DSparse(request,dataset_id):
       dictform = geoforms.GEOForm(data=request.POST,instance=dictionary)
       metaform = geoforms.GEOMetaForm(data=request.POST,instance=metainfo)
       if dictform.is_valid() and metaform.is_valid():
+         ## This is going to be long but only
+         ## the first time... for now is ok.
+         ## But it need to be fixed, with a proper
+         ## queue....
+         p = Process(target = get_express, args = (dataset_id,))
+         p.start()
          dictform.save()
          metaform.save()
          dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]

@@ -310,6 +310,28 @@ border-collapse:separate;*/
  padding:5px;
 }
 
+#unique_probe {
+ float:left;
+ display:block;
+ margin:10px;
+}
+
+#selected_probe { 
+ float:left;
+ display:block;
+ padding:5px;
+ min-width:250px;
+ text-align:center;
+}
+
+#selected_warning { 
+ float:left;
+ display:block;
+ padding:5px;
+ min-width:250px;
+ text-align:center;
+}
+
 #selected_chip {
  float:left;
  display:block;
@@ -361,13 +383,13 @@ border-collapse:separate;*/
  display:block;
  margin:10px;
  margin-left:50px;
- width:400px;
+ width:630px;
  height:400px;
  background:grey;
 }
 
 #results_viewer img {
- width:400px;
+ width:630px;
  height:400px;
 }
 

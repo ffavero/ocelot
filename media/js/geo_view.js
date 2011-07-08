@@ -1,4 +1,5 @@
 function view(dataset) {
+ jQuery.fn.exists = function(){return jQuery(this).length>0;};
 // Get the CSRF Token and send it whithin the ajax calls
  $('html').ajaxSend(function(event, xhr, settings) {
   function getCookie(name) {
@@ -67,13 +68,16 @@ function view(dataset) {
  }
 
  //asyc call the xml to populate the Dictionary table:
+ columncount = 0;
  dictTags = [];
  $('#dictTable').find('.cellTitle').each( function() {
+   columncount = columncount + 1;
    if ($(this).text()!='GSM') {
     dictTags.push($(this).attr('title'));
    }
   }
  );
+ $('#dict_table').css({'width': 20 + (columncount*125) });
  // style the hover action on the table button
  // and give it a proper onClick function
  $('#viewDict').hover(
@@ -132,11 +136,12 @@ function view(dataset) {
    secondary: "ui-icon-triangle-1-e"
   },
   text: true,
+  disabled: true,
  }); 
- // disabled: true,
+ // 
 
  $('#do_analysis').click(function() {
-  doItbutton(dataset);
+  doItbutton(dataset,"kmlines");
  });
 }
 
@@ -206,8 +211,67 @@ function annotAutocomplete(json,annot) {
   minLength: level,
   source : autocompleteAnnot,
   select: function(event, ui){
-   alert(jsonTMP[ui.item.value])
+   $('#selected_warning').remove();
+   $('#unique_probe_menu').remove();
+   $('#selected_probe').remove();
+   listFromJson = jsonTMP[ui.item.value];   
+   // Check if the chosen ID have multiple 
+   // identifiers or it is unique.
+   if (listFromJson.length > 1) {
+    uniqueGeneMenu(json,listFromJson);
+   } else {
+    $('#gene_id').val('');
+    selectedID = listFromJson[0];  
+    text = JSON.stringify(json[selectedID]);
+    text = text.replace(/\{/g,' ');
+    text = text.replace(/\}/g,' ');
+    text = text.replace(/\"/g,'');
+    text = text.replace(/\n/g,'');
+    text = text.replace(/:/g,'=>');
+    selectedProbe = '<div id="selected_probe" class="ui-corner-all ui-state-highlight"><span class="ui-icon ui-icon-info"></span>Selected gene is: <div id="selected_id">'+selectedID+'</div> ( '+text+' )</div>';
+    $(selectedProbe).appendTo('#unique_probe');
+    $('#do_analysis').button('enable');
+   }
+   ui.item.value = '';
   },
+  change: function(event, ui) {
+
+   if ($('#selected_probe').exists() || $('#unique_probe_menu').exists()) {
+    // Do nothing
+   } else {
+    $('#selected_warning').remove();
+    selectWarn = '<div id="selected_warning" class="ui-corner-all ui-state-error"><span class="ui-icon ui-icon-alert"></span><strong>Warning</strong> You have to select a probe/gene in order to proceed</div>';
+    $(selectWarn).appendTo('#unique_probe');
+   }
+  },
+ });
+}
+
+function uniqueGeneMenu(json,list) {
+ var itemList = '<div id="unique_probe_menu">';
+ $(list).each(function(index){
+  itemList[listFromJson[index]] = [];
+  lineConts = JSON.stringify(json[list[index]]);
+  lineConts = lineConts.replace(/\{/g,' ');
+  lineConts = lineConts.replace(/\}/g,' ');
+  lineConts = lineConts.replace(/\"/g,'');
+  lineConts = lineConts.replace(/\n/g,'');
+  lineConts = lineConts.replace(/:/g,'=>');
+  itemList += '<li><a href="#" title="'+list[index]+'">'+list[index]+': '+lineConts+'</a></li>';
+ })
+ itemList += '</div>';
+ $(itemList).appendTo('#unique_probe');
+ $('#unique_probe_menu').menu({
+   selected: function(event, ui) {
+//    alert( ui.item.find('a').attr('title'));
+    selectedID = ui.item.find('a').attr('title');
+    text       = ui.item.text();
+    $('#unique_probe_menu').remove();
+    selectedProbe = '<div id="selected_probe" class="ui-corner-all ui-state-highlight"><span class="ui-icon ui-icon-info"></span>Selected gene is: <div id="selected_id">'+selectedID+'</div> ( '+text+' )</div>';
+    $(selectedProbe).appendTo('#unique_probe');
+    $('#gene_id').val('');
+    $('#do_analysis').button('enable');
+   }, 
  });
 }
 
@@ -247,15 +311,12 @@ function dictTabtoJSON (fields) {
 
  results = new Object();
  paths = [];
- clumncount = 0;
 
  $('#dict_table').find('.cellTitle').each( function(){
   paths.push($(this).text());
-  clumncount = clumncount + 1;
  });
- $('#dict_table').css({'width': 20 + (clumncount*125) });
  $('#dict_table').find('.tab_row').each(function(){
-  vat = sampleID = '';
+  sampleID = '';
   $(this).find('.cell').each(function(index){
       if (index == 0) {
        sampleID = $(this).text();
@@ -266,8 +327,8 @@ function dictTabtoJSON (fields) {
         tmptxt = $(this).text().replace(/\n/g,'');
         tmptxt = tmptxt.replace(/\s/g,'');
         tmptxt = tmptxt.replace(/\t/g,'');
-        results[sampleID][paths[index]] = new Object();
-        results[sampleID][paths[index]] = tmptxt;
+        results[sampleID][paths[index].substring(0,4)] = new Object();
+        results[sampleID][paths[index].substring(0,4)] = tmptxt;
        }
       }  
   });
@@ -277,13 +338,14 @@ function dictTabtoJSON (fields) {
  return JSON.stringify(results);
 }
 
-function doItbutton (dataset) {
+function doItbutton (dataset,analysis) {
  // collect the 3 info (filename, probe name and
  // selected clinical data) to pass to theserver
 
  // ID_REF:
- idRef =  $('#gene_id').val();
-
+ idRef =  $('#selected_id').text().replace(/\n/g,'');
+ idRef =  $('#selected_id').text().replace(/\"/g,'');
+ idRef =  $('#selected_id').text().replace(/ /g,'');
  //File name
  var filename='';
  var platformNumber = $('#choose_plat > li').size();
@@ -294,6 +356,7 @@ function doItbutton (dataset) {
    $(selPlatform).find('div').remove();
    filename = dataset+'-'+$(selPlatform).text().replace(/\s/g,'');
  }
+ // For now dummy setted...
  fields = ['surv_tot','event_tot'];
  dataJSON = dictTabtoJSON (fields);
  //Now we can submit the data to the server
@@ -304,7 +367,7 @@ function doItbutton (dataset) {
    data_json : dataJSON,
    file_code : filename,
    id_ref : idRef,
-   test : 'kmlines',
+   test : analysis,
    format: 'png'
   },
   type: 'post',

@@ -240,16 +240,18 @@ def platformFreqs(platID):
       if p == platID:
          count += 1
    return count
-   
+
 def get_express(acc):
    gpls = GPL2title(acc)
    if len(gpls) == 1:
       series_file = acc + '_series_matrix.txt.gz'
-      getGEOexpr(acc,series_file)
+      if not os.path.isfile(ROOT_PATH + '/data/expressions/' + series_file):
+         getGEOexpr(acc,series_file)
    else:
       for gpl in gpls:
          series_file = acc + '-'+ gpl['id'] +'_series_matrix.txt.gz'
-         getGEOexpr(acc,series_file)
+         if not os.path.isfile(ROOT_PATH + '/data/expressions/' + series_file):
+            getGEOexpr(acc,series_file)
 
 def getGEOexpr(acc,filename):
    geo_expr_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/' + acc + '/' + filename

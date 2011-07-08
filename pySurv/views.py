@@ -56,17 +56,32 @@ def kmlines(data,filename):
    expr    = [] 
    names = data.keys()
    for name in names:
-      time.append(data[name]['surv_tot'])
-      event.append(data[name]['event_tot'])
+      time.append(data[name]['surv'])
+      event.append(data[name]['even'])
       expr.append(data[name]['expression'])
    robjects.r ('''
-      KMLines <- function(filename,time,event,expr) {
-       CairoPNG(filename=filename)
+      KMLines <- function(filename,time,event,expr,separator=0.5, main='') {
+       CairoPNG(filename=filename,width = 1280, height = 800)
        time  = as.numeric(time)
        event = as.numeric(event)
        expr  = as.numeric(expr)       
        surv <- Surv(time,event)
-       survplot(surv ~ cutn(t(expr)))
+       separator = 1/separator
+       ord = expr[order(expr)]
+       mid = as.integer(length(expr)/separator)
+       par(mfrow=c(1,2),omi=c(1,1,1,0))
+       plot(y = ord, x = c(1:length(ord)),type='n',xlab='Samples',ylab='eV')
+       lines(y=ord[1:mid],x=c(1:mid),col='red')
+       lines(y=ord[mid:length(ord)],x=c(mid:length(ord)),col='green')
+       segments(x0 = mid, y0=ord[1], x1=mid,y1=ord[mid],lty=4,lwd=0.5)
+       segments(x0 = 0, y0=ord[mid], x1=mid,y1=ord[mid],lty=4,lwd=0.5)
+       groups = as.numeric(expr >= ord[mid])
+       groups[groups==0] <- "Group A"
+       groups[groups==1] <- "Group B"
+       groups <-as.factor(groups)
+       survplot (Surv(time,event) ~ groups, col=c('red','green'),xlab = 'Time', ylab = 'Fraction')
+       title(main,outer=TRUE)
+       #survplot(surv ~ cutn(t(expr)))
        dev.off()
       }
    ''')

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/chip.css" />
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
+  <script type="text/javascript" src="/media/js/platform_admin.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     PlatformEdit();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Ocelot Platforms admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+ 
+ <div id='platforms_panel'>
+  {{platform_id}}
+ </div><!--platforms_panel-->
+{% endblock %}

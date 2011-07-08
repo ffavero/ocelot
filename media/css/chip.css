@@ -1,0 +1,167 @@
+#platforms_panel{
+ float:left;
+ display:block;
+ margin:10px;
+ padding:5px;
+}
+
+#platforms_list{
+ float:left;
+ display:block;
+ margin:10px;
+ padding:5px;
+ width:750px;
+ overflow:auto;
+}
+
+.plt_line{
+ float:left;
+ display:block;
+ width:730px;
+ height:30px;
+ line-height:30px;
+}
+.plt_line button,img {
+ float:left;
+ display:block;
+ width:20px;
+ height:20px;
+ margin:5px;
+ margin-left:10px;
+}
+
+.plt_title{
+ text-align:center;
+ 
+}
+
+.plt_id{
+ float:left;
+ display:block;
+ width:90px;
+ margin-left:10px;
+}
+
+.plt_name{
+ float:left;
+ display:block;
+ height:30px;
+ width:500px;
+ margin-left:10px;
+ overflow:hidden;
+}
+
+.plt_buttons{
+ float:left;
+ display:block
+ height:30px;
+ width:110px;
+ margin-left:10px;
+}
+
+#platform_table {
+ float:left;
+ display:block;
+ margin:10px;
+ width:1024px;
+ overflow:auto;
+}
+
+#annot_tab {
+ margin:10px;
+ display:block;
+ float:left;
+ width:100%;
+}
+
+.cellTitle {
+ float:left;/*fix for  buggy browsers*/
+ display:block;
+ width:100px;
+ height:30px;
+ line-height:30px;
+ overflow:hidden;
+ border:1px dotted;
+ margin:1px;
+ font-size:12px;
+ text-align:center;
+ background:#EEE8AA;
+}
+
+.cellTitle:hover {
+ background:#F0E68C;
+}
+
+.cell {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:100px;
+ height:30px;
+ line-height:30px;
+ border:1px dotted;
+ margin:1px;
+ font-size:12px;
+ overflow:hidden;
+ background-color:#E6E6FA;
+ text-align:center;
+}
+
+.tab_row  {
+ float:left;
+ display: block;
+}
+
+#platform_column_def {
+ float:left;
+ display:block;
+ margin:10px;
+ height:150px;
+ width:100%;
+}
+
+#backToList {
+ float:left;
+ display:block;
+ margin:10px;
+}
+
+#little_comment {
+ float:left;
+ display:block;
+ margin:10px;
+ padding:10px;
+}
+
+#id_good_list {
+ margin:10;
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:400px;
+ min-height:50px;
+ padding:5px;
+}
+
+.span_id_good {
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ font-size:14px;
+ padding:5px;
+ margin-left:2px;
+ border: 1px solid;
+}
+
+.span_id_good a {
+ font-size:12px;
+}
+
+#store_it {
+ float:left;
+ display:block;
+ margin:10px;
+ width:100%;
+}
+
+#get_annotation_file {
+ float:left;
+ display:block;
+}

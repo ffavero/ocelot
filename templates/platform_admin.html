@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/chip.css" />
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
+  <script type="text/javascript" src="/media/js/platform_admin.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     Platforms();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Ocelot Platforms admin
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+ 
+ <div id='platforms_panel'>
+  <div id='platforms_list' class='ui-corner-all ui-widget-content'>
+   <div class='plt_line ui-corne-all ui-widget-header'>
+     <div class='plt_id plt_title'><strong>Platform ID</strong></div>
+     <div class='plt_name plt_title'><strong>PLatfrom Name</strong></div>
+     <div class='plt_buttons plt_title'><strong>Actions</strong></div>
+   </div><!--plt_line-->
+   {% for platform in platforms %}
+    <div class='plt_line ui-corner-all ui-widget-content'>
+     <div class='plt_id'>{{platform.platform_id}}</div>
+     <div class='plt_name' title='{{platform.name}}'>{{platform.name}}</div>
+     <div class='plt_buttons'>
+      <button type='button' onclick="editPlatform('{{platform.platform_id}}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Edit {{platform.platform_id}} annotation file'>
+       <span class='ui-button-icon-primary ui-icon ui-icon-pencil'></span>
+       <span class="ui-button-text">Edit</span>
+      </button>
+      <button type='button' onclick="goToPlatform('{{platform.platform_id}}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Retrieve and choose the columns for {{platform.platform_id}}'>
+       <span class='ui-button-icon-primary ui-icon ui-icon-zoomin'></span>
+       <span class='ui-button-text'>Watch Table from GEO annotation</span>
+      </button>
+      <img src='/media/css/img/{{ platform.status }}.png' title='Saved status: {{ platform.status }}'/>
+     </div><!--plt_buttons-->
+    </div><!-- plt_line -->
+   {% endfor %}	 
+  </div><!--platforms_list-->
+ </div><!--platforms_panel-->
+{% endblock %}
