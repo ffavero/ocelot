@@ -70,13 +70,13 @@ def GEOdsParse(f):
    acc=  smart_unicode(geElmText(tree,'Accession'))
    results = dict(title = title, pubmed = pm, released = released, summary = summ, accessions = acc)
    return results
-
+'''
 def doGSMtable(gsms,tag):
-   '''
+   
    Take some xml from NCBI and build the Char
    table (still to be improve... look at the 
    javascript version)
-   '''
+   
    NS = '//{http://www.ncbi.nlm.nih.gov/geo/info/MINiML}'
    tagname = NS + tag
    with contextlib.closing(urlopen(getGEOurl(gsms[0],'data'))) as GSMfirst:
@@ -102,6 +102,65 @@ def doGSMtable(gsms,tag):
    except:
       pass
    return table
+'''
+def doGSMtable(gsms):
+   '''
+   Take the xml from NCBI and build the Char
+   table (still to be improve... look at the 
+   javascript version)
+   '''
+   NS = '{http://www.ncbi.nlm.nih.gov/geo/info/MINiML}'
+   samples         = '//'+NS + 'Sample'
+   chars_from_root = '//'+NS + 'Characteristics'
+   characts        =      NS + 'Characteristics'
+   channels        =      NS + 'Channel'
+   with contextlib.closing(urlopen(getGEOurl(gsms,'data'))) as xml:
+      geo = ET.parse(xml)
+   elts = geo.findall(chars_from_root)
+   # Collect all the tags:
+   tags = []
+   for elem in elts:
+      content = elem.get('tag')
+      if content is not None:
+         content = content.strip()
+      if content not in tags:
+         tags.append(content)
+   table = ''   
+   if len(tags) > 0:
+      table += '<div id="char_table">'
+      #Create the cell titles from the collected tags
+      table +=  '<div class="tab_row">'
+      for tag in tags:
+         if tag is not None:
+            table += '<div class="cellTitle">'+tag+'</div>'
+         else:
+            table += '<div class="cellTitle"></div>'
+      table +=  '</div><!--tab_row-->'                     
+      elts = geo.findall(samples)
+      for elem in elts:
+         channs   = elem.findall(channels)
+         elemdict = {}
+         for chann in channs:
+            chars = chann.findall(characts)
+            for char in chars:
+               chartag = char.get('tag')
+               chartex = char.text
+               if chartag is not None:
+                  if chartex is not None:
+                     elemdict[chartag.strip()] = chartex.strip()
+         elemkeys = elemdict.keys()
+         table += '<div class="tab_row">'
+         for tag in tags:
+            if tag in elemkeys:
+               table += '<div class="cell">'+elemdict[tag]+'</div>'
+            else:
+               table += '<div class="cell"></div>'
+         table += '</div><!--tab_row-->'                     
+      table += '</div><!--char_table-->'   
+   else:
+      table = '<div></div>'
+   return mark_safe(table)
+
 
 def eUtilsNCBI(acc,convto):
    '''

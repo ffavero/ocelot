@@ -87,7 +87,7 @@ def DSparse(request,dataset_id):
    del DS['accessions']
    acclen = len(acc)
    doGSMtable.needs_autoescape = True
-   GSMtable = doGSMtable(acc[0:3],'Characteristics')
+   GSMtable = doGSMtable(dataset_id)
    # Form part:
    if request.method == 'GET':
       dictform = geoforms.GEOForm(instance=dictionary)
