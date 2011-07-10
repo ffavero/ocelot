@@ -2,6 +2,7 @@ from __future__ import with_statement
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from ocelot.pyGEO.models import Dictionary, MetaInfo
+from ocelot.main.queue import send_to_queue
 from ocelot.Platforms.models import Platform
 from ocelot.main.models import Datasets
 from ocelot.pyGEO.utils import GEOdsParse, getGEOurl, doGSMtable, RegisterGSE, GPL2title, platformFreqs, get_express
@@ -12,7 +13,6 @@ from urllib2 import urlopen
 import contextlib, datetime
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-from multiprocessing import Process 
 from django.forms import model_to_dict
 
 @login_required(login_url='/accounts/login/')
@@ -94,8 +94,9 @@ def DSparse(request,dataset_id):
          ## the first time... for now is ok.
          ## But it need to be fixed, with a proper
          ## queue....
-         p = Process(target = get_express, args = (dataset_id,))
-         p.start()
+         #p = Process(target = get_express, args = (dataset_id,))
+         #p.start()
+         send_to_queue('ocelot.pyGEO.utils','get_express',dataset_id)
          dictform.save()
          metaform.save()
          dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]

@@ -34,13 +34,21 @@
       function() {
        $('#restoreBKP').attr({ 'src' : '/media/css/img/backup.png' });
       }
-     )
+     );
      $('#appAdmin').hover(
       function() {
        $('#appAdmin').attr({ 'src' : '/media/css/img/django_hover.png' });
       },
       function() {
        $('#appAdmin').attr({ 'src' : '/media/css/img/django.png' });
+      }
+     );
+     $('#Queue').hover(
+      function() {
+       $('#Queue').attr({ 'src' : '/media/css/img/queue_hover.png' });
+      },
+      function() {
+       $('#Queue').attr({ 'src' : '/media/css/img/queue.png' });
       }
      )
     });
@@ -62,5 +70,6 @@ Ocelot admin
 <input type='image' src='/media/css/img/geo_logo.png' onclick="window.location.replace('/admin/geo/')" title='Manage the content of the GEO dataset' id='GEOadmin'/>
 <input type='image' src='/media/css/img/platforms.png' onclick="window.location.replace('/admin/chip/')" title='Managed/Install microarray platforms annotations' id='PlatformAdmin'/>
 <input type='image' src='/media/css/img/backup.png' onclick="window.location.replace('/admin/geo/')" title='Backup/Restore' id='restoreBKP'/>
+<input type='image' src='/media/css/img/queue.png' onclick="window.location.replace('/admin/queue/')" title='View Task status' id='Queue'/>
 <input type='image' src='/media/css/img/django.png' onclick="window.location.replace('/appadmin/')" title='Application users admin task' id='appAdmin'/>
 {% endblock %}

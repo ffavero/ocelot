@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+ {% block extahead %}
+  <link type="text/css" rel="stylesheet" href="/media/css/queue.css" />
+  <script type="text/javascript" src="/media/js/lib/json2.js"></script>
+  <script type="text/javascript" src="/media/js/queue.js"></script>
+  <script type="text/javascript">
+   history.navigationMode = 'compatible';
+   doAfter = function(time, f) {
+     setTimeout(f, time);
+   };
+   $(document).ready(function() {
+    $('#contents').css('display', 'none');
+    doAfter(50,function () {
+     queue();
+    });
+    $('#contents').fadeIn(600);
+   });
+  </script>
+ {% endblock %}
+
+{% block title %}
+Ocelot Tasks queue
+{% endblock %}
+
+ {% block nav-admin %}
+ <a id='nav-admin' class='selected' href='/admin/'>admin</a>
+ {% endblock %}
+
+{% block contents %}
+ <div id='queue_panel'>
+  <div id='queue_list' class='ui-corner-all ui-widget-content'>
+   <div class='q_line ui-corne-all ui-widget-header'>
+     <div class='proc_id q_title'><strong>Task ID</strong></div>
+     <div class='proc_function q_title'><strong>Function</strong></div>
+     <div class='proc_args q_title'><strong>Arguments</strong></div>
+     <div class='proc_stored q_title'><strong>Stored</strong></div>
+     <div class='proc_start q_title'><strong>Start</strong></div>
+     <div class='proc_end q_title'><strong>End</strong></div>
+     <div class='proc_status q_title'><strong>Status</strong></div>
+   </div><!--plt_line-->
+   {% for process in tasks %}
+    <div class='q_line ui-corner-all ui-widget-content'>
+     <div class='proc_id' title='{{process.process_id}}'>{{process.process_id}}</div>
+     <div class='proc_function' title='{{process.function}}'>{{process.function}}</div>
+     <div class='proc_args' title='{{process.argument}}'>{{process.argument}}</div>
+     <div class='proc_stored' title='{{process.date_stored}}'>{{process.date_stored}}</div>
+     <div class='proc_start' title='{{process.date_start}}'>{{process.date_start}}</div>
+     <div class='proc_end' title='{{process.date_end}}'>{{process.date_end}}</div>
+     <div class='proc_status' title='{{process.status}}'>{{process.status}}</div>     
+    </div><!-- q_line -->
+   {% endfor %}	 
+  </div><!--queue_list-->
+ </div><!--queue_panel-->
+{% endblock %}
