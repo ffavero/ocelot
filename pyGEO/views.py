@@ -61,9 +61,15 @@ def DSparse(request,dataset_id):
    subtypes   = []
    diseases   = []
    for dataset in datasets:
-      treatments.append(dataset.treatment)
-      diseases.append(dataset.disease)
-      subtypes.append(dataset.subtype)
+      treats = dataset.treatment.split(',')
+      for treatment in treats:
+         treatments.append(treatment.strip())
+      dis = dataset.disease.split(',')
+      for disease in dis:
+         diseases.append(disease.strip())
+      subtps = dataset.subtype.split(',')
+      for subtype in subtps:
+         subtypes.append(subtype.strip())
    treatments = simplejson.dumps(treatments)
    subtypes   = simplejson.dumps(subtypes)
    diseases   = simplejson.dumps(diseases)

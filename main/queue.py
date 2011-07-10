@@ -21,7 +21,7 @@ def Queuefy(funcpath,func,args):
    non_lit = re.compile(r'[\W]+')
    process_id = func + non_lit.sub('',args)
    if checkqueue(func,args) == False:
-      task  = Ocelotqueue(process_id=process_id,function=funcpath+'.'+func,argument=args,status='Waiting',date_stored=datetime.now(),date_start=datetime.now(),date_end=datetime.now())
+      task  = Ocelotqueue(process_id=process_id,function=funcpath+'.'+func,argument=args,status='Waiting',date_stored=datetime.now())
       task.save()
       try:
          imp = 'from '+funcpath+' import '+func
