@@ -23,20 +23,7 @@ def Queuefy(funcpath,func,args):
    if checkqueue(func,args) == False:
       task  = Ocelotqueue(process_id=process_id,function=funcpath+'.'+func,argument=args,status='Waiting',date_stored=datetime.now())
       task.save()
-      try:
-         imp = 'from '+funcpath+' import '+func
-         exe = func +'('+args+')'
-         task.status = 'Active'
-         task.date_start = datetime.now()
-         task.save()
-         exec(imp)
-         exec(exe)
-         task.delete()
-      except:
-         print sys.exc_info()
-         task.status   = 'Error'
-         task.date_end = datetime.now()
-         task.save()
+      consume_queue()
    else:
       return 'Task already in queue'
 
@@ -50,4 +37,41 @@ def checkqueue(func,args):
       return queue[0].status
    if len(queue) == 0:
       return False
+
+def consume_queue():
+   '''
+   Consume slowly the queue in order to have a defined
+   number of process running at the same time, the rest 
+   of them will stay on queue.
+   '''
+   queue_active = len(list(Ocelotqueue.objects.filter(status = 'Active')))
+   if queue_active < 3:
+      task = Ocelotqueue.objects.filter(status__exact = 'Waiting').order_by('date_stored')
+      if len(task) >= 1:
+         task     = task[0]
+         funcpath = task.function
+         funcpath = funcpath.split('.')
+         func     = funcpath.pop()
+         funcpath = '.'.join(funcpath)
+         args     = task.argument
+         try:
+            imp = 'from '+funcpath+' import '+func
+            exe = func +'('+args+')'
+            task.status = 'Active'
+            task.date_start = datetime.now()
+            task.save()
+            exec(imp)
+            exec(exe)
+            task.delete()
+            consume_queue()
+         except:
+            print sys.exc_info()
+            task.status   = 'Error'
+            task.date_end = datetime.now()
+            task.save()
+      else:
+         print 'Queue emptyed'
+   else:
+      print 'Queue Full'
+
    
