@@ -132,6 +132,13 @@
  padding:10px;
 }
 
+#list_label{
+ float:left;
+ display:block;
+ margin:10px;
+ width:400px;
+}
+
 #id_good_list {
  margin:10;
  float:left;/*fix for  buggy browsers*/
@@ -159,6 +166,12 @@
  display:block;
  margin:10px;
  width:100%;
+}
+#succes_message{
+ float:left;
+ display:block;
+ margin:10px;
+ padding:10px;
 }
 
 #get_annotation_file {

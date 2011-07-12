@@ -102,7 +102,7 @@ def DSparse(request,dataset_id):
          ## queue....
          #p = Process(target = get_express, args = (dataset_id,))
          #p.start()
-         send_to_queue('ocelot.pyGEO.utils','get_express',dataset_id)
+         send_to_queue('ocelot.pyGEO.utils','get_express',simplejson.dumps(dataset_id))
          dictform.save()
          metaform.save()
          dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]

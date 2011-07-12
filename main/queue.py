@@ -25,7 +25,7 @@ def Queuefy(funcpath,func,args):
       task.save()
       try:
          imp = 'from '+funcpath+' import '+func
-         exe = func +'("'+args+'")'
+         exe = func +'('+args+')'
          task.status = 'Active'
          task.date_start = datetime.now()
          task.save()

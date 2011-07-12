@@ -6,7 +6,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.context_processors import csrf
 from ocelot.Platforms.models import Platform
 from ocelot.Platforms.utils import geo_annot_tab
+from ocelot.main.queue import send_to_queue
 from django.shortcuts import render_to_response
+from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib.auth.decorators import login_required
 
 def get_annot_json(request):
@@ -33,7 +35,7 @@ def index_annot(request):
    platforms_info = []
    for platform in platforms:
       status = ''
-      if os.path.isfile(ROOT_PATH +'/data/annotations/' + platform.platform_id + '.json.gz'):
+      if os.path.isfile(ROOT_PATH +'/data/annotations/' + platform.platform_id + '_metainfo.json.gz'):
          status = 'OK'
       else:
          status = 'NO'
@@ -61,9 +63,19 @@ def table_platform(request):
    '''
    if request.is_ajax():
       if request.method == 'POST':
+         try:
+            list_annot = request.POST['list_annot']
+         except MultiValueDictKeyError:
+            list_annot = ''
          platform_id = request.POST['platform_id']
-         table = geo_annot_tab(platform_id,10)
-         return HttpResponse(table,mimetype="text/html")
+         if list_annot == '':
+            table = geo_annot_tab(platform_id,10)
+            return HttpResponse(table,mimetype="text/html")
+         else:
+            args =  simplejson.dumps(platform_id)+','+list_annot
+            send_to_queue('ocelot.Platforms.utils','get_geo_annot_split',args)
+            return HttpResponse('The request was sent to the queue.',mimetype="text/html")
+            #return HttpResponseRedirect('/admin/chip/')
       else:
          return HttpResponse("Not Found",mimetype="text/plain")
    else:
