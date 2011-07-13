@@ -109,12 +109,6 @@ def DSparse(request,dataset_id):
       dictform = geoforms.GEOForm(data=request.POST,instance=dictionary)
       metaform = geoforms.GEOMetaForm(data=request.POST,instance=metainfo)
       if dictform.is_valid() and metaform.is_valid():
-         ## This is going to be long but only
-         ## the first time... for now is ok.
-         ## But it need to be fixed, with a proper
-         ## queue....
-         #p = Process(target = get_express, args = (dataset_id,))
-         #p.start()
          dictform.save()
          metaform.save()
          dictionary = Dictionary.objects.get(dataset_id__exact = dataset_id)
@@ -132,8 +126,7 @@ def DSparse(request,dataset_id):
          already_indexed = list(Datasets.objects.filter(dataset_id__exact = dataset_id))
          if already_indexed:
             RegisterGSE(dictionary,metainfo)
-         else:
-            send_to_queue('ocelot.pyGEO.utils','get_express',simplejson.dumps(dataset_id))
+         send_to_queue('ocelot.pyGEO.utils','get_express',simplejson.dumps(dataset_id))
          return HttpResponseRedirect('/admin/geo/')
    payload = dict(platforms=platforms, dictform=dictform, metaform=metaform, DS=DS, GSMtable=GSMtable, dataset_id=dataset_id, acclen=acclen, treatments=treatments, diseases=diseases, subtypes=subtypes)
    return render_to_response('geo_parse.html',payload,RequestContext(request))
