@@ -9,5 +9,5 @@ class GEOForm(forms.ModelForm):
 class GEOMetaForm(forms.ModelForm):
     class Meta:
         model = models.MetaInfo
-        exclude = ('dataset_id','platform','saved','released')
+        exclude = ('dataset_id','platform','saved','released','samples_count')
 

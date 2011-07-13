@@ -21,10 +21,10 @@ function initGEO() {
  //handle bkg color change on hover with jquery (FF4 problem) 
  $('.DSLine').hover(
   function() {
-   $(this).css('background-color', '#baf7a6');
+   $(this).addClass('ui-state-active');
   },
   function() {
-   $(this).css('background-color', '#fff');
+   $(this).removeClass('ui-state-active');
   }
  )
  //ok
@@ -124,4 +124,20 @@ function goToGSE(gse) {
   $('#loading').height($(document).height());
  });
  window.location='/admin/geo/'+gse+'/';
+}
+
+function publishGSE(gse) {
+  $.ajax({
+  url:'/admin/geo/addDS/',
+  type:'post',
+  data:{data:gse,location:'index'},
+  dataType:'html',
+  async:true,
+  success: function(){
+   location.reload();
+  },
+  error: function() {
+   alert('Sorry an error occurred.');
+  }
+ });
 }

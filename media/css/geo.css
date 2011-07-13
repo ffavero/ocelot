@@ -1,16 +1,16 @@
 #geo_left_panel {
  float:left;
  display:block;
- width:250px;
+ width:280px;
 }
 
 #geo_ds_list {
  float:left;
  margin-top:10px;
  display:block;
- width:250px;
+ width:280px;
  height:400px;
- border:1px dotted;
+ /*border:1px dotted;*/
  overflow:auto;
 }
 /*
@@ -27,21 +27,27 @@
 
 .DSLine {
  height:30px;
- border-bottom:1px dashed #c0c0c0;
+ /*border-bottom:1px dashed #c0c0c0;*/
+ line-height:30px;
 }
 
 .DSLine img {
- margin-left:15px;
+ margin-left:5px;
  margin-top:5px;
  width:15px;
 }
 
-.DSLine:hover {
- background:#baf7a6;
+.DSLine button {
+ margin-left:5px;
 }
 
+/*.DSLine:hover {
+ background:#baf7a6;
+}*/
+
 .GSEname {
- margin:5px;
+ margin-left:5px;
+ margin-right:5px;
  float:left;
  width:90px;
 }

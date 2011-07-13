@@ -33,18 +33,31 @@ Ocelot admin
  <div id='geo_left_panel'>
   <div id='geo_ds_list'>
    {% for ds in d_saved %}
-    <div class='DSLine'>
-     <div class='GSEname'>{{ ds.0 }}
+    <div class='DSLine ui-corner-all ui-widget-content'>
+     <div class='GSEname'>{{ ds.dataset }}
      </div> <!-- GSEname -->
-     <button type='button' onclick="removeDS('{{ ds.0 }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Remove {{ ds.0 }} from the list'>
-      <span class='ui-button-icon-primary ui-icon ui-icon-minus'></span>
+     <button type='button' onclick="removeDS('{{ ds.dataset }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Remove {{ ds.dataset }} from the list'>
+      <span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>
       <span class="ui-button-text">Remove</span>
      </button>
-     <button type='button' onclick="goToGSE('{{ ds.0 }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='View {{ ds.0 }} details'>
+     <button type='button' onclick="goToGSE('{{ ds.dataset }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='View {{ ds.dataset }} details'>
       <span class='ui-button-icon-primary ui-icon ui-icon-zoomin'></span>
       <span class='ui-button-text'>GoTo</span>
      </button>
-     <img src='/media/css/img/{{ ds.1 }}.png' title='Saved status: {{ ds.1 }}'/>
+     <img src='/media/css/img/{{ ds.parsed }}.png' title='Parsing status: {{ ds.parsed }}'/>
+     {% if ds.parsed == 'OK'%}
+     <button type='button' onclick="publishGSE('{{ ds.dataset }}')" class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title='Publish {{ ds.dataset }} in the main index'>
+      <span class='ui-button-icon-primary ui-icon ui-icon-check'></span>
+      <span class='ui-button-text'>GoTo</span>
+     </button>
+     <img src='/media/css/img/{{ ds.indexed }}.png' title='Indexed status: {{ ds.indexed }}'/>
+     {% else %}{% if ds.parsed == 'NO' %}
+     <button type='button'  disabled='disabled' class='ui-button ui-button-icon-only ui-widget ui-state-default ui-corner-all' title="It's not possible to publish this dataset in the main index yet.">
+      <span class='ui-button-icon-primary ui-icon ui-icon-alert'></span>
+      <span class='ui-button-text'>GoTo</span>
+     </button>
+     <img src='/media/css/img/{{ ds.indexed }}.png' title='Indexed status: {{ ds.indexed }}'/>
+     {%endif%}{%endif%}
     </div> <!-- DSLine -->
    {% endfor %}	 
   </div><!--geo_ds_list-->

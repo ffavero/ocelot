@@ -24,10 +24,17 @@ def admin(request):
    datasets = list(Dictionary.objects.order_by('dataset_id'))
    d_saved = []
    for dataset in datasets:
-      if list(Datasets.objects.filter(dataset_id = dataset.dataset_id)):
-         d_saved.append([dataset.dataset_id, 'OK'])
+      indexed = list(Datasets.objects.filter(dataset_id__exact = dataset.dataset_id))
+      parsed  = list(MetaInfo.objects.filter(dataset_id__exact = dataset.dataset_id))
+      if indexed:
+         indexed = 'OK'
       else:
-         d_saved.append([dataset.dataset_id, 'NO'])
+         indexed = 'NO'
+      if parsed:
+         parsed = 'OK'
+      else:
+         parsed = 'NO'
+      d_saved.append({'dataset': dataset.dataset_id, 'parsed': parsed, 'indexed': indexed})
    platforms = list(Platform.objects.all())
    for p in platforms:
       p.used = platformFreqs(p.platform_id)
@@ -48,7 +55,10 @@ def DSparse(request,dataset_id):
       return HttpResponseRedirect('/admin/geo/')
    else:
       dictionary = dictionary[0]
-      metainfo   = metainfo[0]
+      if not metainfo:   
+         metainfo = MetaInfo(dataset_id = dataset_id)
+      else:
+         metainfo = metainfo[0]
    datasets = list(Datasets.objects.all())
    platforms = GPL2title(dataset_id)
    platform_list = []
@@ -120,7 +130,9 @@ def DSparse(request,dataset_id):
             if not plt:
                plt = Platform(platform_id = platform['id'], name = platform['title'] )
                plt.save()
-         RegisterGSE(dictionary,metainfo)
+         already_indexed = list(Datasets.objects.filter(dataset_id__exact = dataset_id))
+         if already_indexed:
+            RegisterGSE(dictionary,metainfo)
          return HttpResponseRedirect('/admin/geo/')
    payload = dict(platforms=platforms, dictform=dictform, metaform=metaform, DS=DS, GSMtable=GSMtable, dataset_id=dataset_id, acclen=acclen, treatments=treatments, diseases=diseases, subtypes=subtypes)
    return render_to_response('geo_parse.html',payload,RequestContext(request))

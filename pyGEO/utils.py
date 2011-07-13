@@ -268,13 +268,11 @@ def addDS(request):
             for ds in dslist:
                if not list(Dictionary.objects.filter(dataset_id__exact = ds)):
                   dataset  = Dictionary(dataset_id = ds)
-                  metainfo = MetaInfo(dataset_id = ds)
                   dataset.save()
-                  metainfo.save()
             return HttpResponse('Dataset saved',mimetype="text/html")
          elif location == 'index':
             ds = request.POST['data']
-            dictionary  = Dictionary.objectsget(dataset_id__exact = ds)
+            dictionary  = Dictionary.objects.get(dataset_id__exact = ds)
             metainfo    = MetaInfo.objects.get(dataset_id__exact = ds)            
             RegisterGSE(dictionary,metainfo)
             return HttpResponse('Dataset saved',mimetype="text/html")   
