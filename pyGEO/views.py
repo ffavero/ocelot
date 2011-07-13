@@ -63,13 +63,16 @@ def DSparse(request,dataset_id):
    for dataset in datasets:
       treats = dataset.treatment.split(',')
       for treatment in treats:
-         treatments.append(treatment.strip())
+         if treatment not in treatments:
+            treatments.append(treatment.strip())
       dis = dataset.disease.split(',')
       for disease in dis:
-         diseases.append(disease.strip())
+         if disease not in disease:
+            diseases.append(disease.strip())
       subtps = dataset.subtype.split(',')
       for subtype in subtps:
-         subtypes.append(subtype.strip())
+         if subtype not in subtypes:
+            subtypes.append(subtype.strip())
    treatments = simplejson.dumps(treatments)
    subtypes   = simplejson.dumps(subtypes)
    diseases   = simplejson.dumps(diseases)
@@ -107,7 +110,11 @@ def DSparse(request,dataset_id):
          metaform.save()
          dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]
          metainfo   = list(MetaInfo.objects.filter(dataset_id = dataset_id))[0]
+         metainfo.treatment = metainfo.treatment.replace(', ',',').strip(',')
+         metainfo.subtype   = metainfo.subtype.replace(', ',',').strip(',')
+         metainfo.disease   = metainfo.disease.replace(', ',',').strip(',')
          metainfo.samples_count = acclen
+         metainfo.save()
          for platform in platforms:
             plt = list(Platform.objects.filter(platform_id = platform['id']))
             if not plt:

@@ -281,10 +281,13 @@ def rmDS(request):
          ds =  request.raw_post_data
          dataset = Dictionary.objects.filter(dataset_id = ds)
          metainf = MetaInfo.objects.filter(dataset_id = ds)
+         indexed = Datasets.objects.filter(dataset_id = ds)
          if list(dataset):
             dataset.delete()
          if list(metainf):
             metainf.delete()
+         if list(indexed):
+            indexed.delete()
          return HttpResponseRedirect('/admin/geo/')
          
 def platformFreqs(platID):
