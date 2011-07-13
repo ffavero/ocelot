@@ -115,11 +115,10 @@ def DSparse(request,dataset_id):
          ## queue....
          #p = Process(target = get_express, args = (dataset_id,))
          #p.start()
-         send_to_queue('ocelot.pyGEO.utils','get_express',simplejson.dumps(dataset_id))
          dictform.save()
          metaform.save()
-         dictionary = list(Dictionary.objects.filter(dataset_id = dataset_id))[0]
-         metainfo   = list(MetaInfo.objects.filter(dataset_id = dataset_id))[0]
+         dictionary = Dictionary.objects.get(dataset_id__exact = dataset_id)
+         metainfo   = MetaInfo.objects.get(dataset_id__exact = dataset_id)
          metainfo.treatment = metainfo.treatment.replace(', ',',').strip(',')
          metainfo.subtype   = metainfo.subtype.replace(', ',',').strip(',')
          metainfo.disease   = metainfo.disease.replace(', ',',').strip(',')
@@ -133,6 +132,8 @@ def DSparse(request,dataset_id):
          already_indexed = list(Datasets.objects.filter(dataset_id__exact = dataset_id))
          if already_indexed:
             RegisterGSE(dictionary,metainfo)
+         else:
+            send_to_queue('ocelot.pyGEO.utils','get_express',simplejson.dumps(dataset_id))
          return HttpResponseRedirect('/admin/geo/')
    payload = dict(platforms=platforms, dictform=dictform, metaform=metaform, DS=DS, GSMtable=GSMtable, dataset_id=dataset_id, acclen=acclen, treatments=treatments, diseases=diseases, subtypes=subtypes)
    return render_to_response('geo_parse.html',payload,RequestContext(request))
