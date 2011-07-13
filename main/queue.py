@@ -5,7 +5,7 @@ import re, sys
 
 def send_to_queue(funcpath,func,args):
    '''
-   Just use the multiprocessing functions
+   Just use the multiprocessing class
    to send the job in the background
    '''
    p = Process(target = Queuefy, args = (funcpath,func,args,))
@@ -70,7 +70,7 @@ def consume_queue():
             task.date_end = datetime.now()
             task.save()
       else:
-         print 'Queue emptyed'
+         print 'Queue emptied'
    else:
       print 'Queue Full'
 

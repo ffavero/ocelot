@@ -27,6 +27,7 @@ class MetaInfo(models.Model):
    """
    dataset_id    = models.CharField(max_length=200)
    samples_count = models.IntegerField(null=True)
+   incl_criteria = models.CharField(max_length=1000,blank=True)
    treatment     = models.CharField(max_length=1000,blank=True)
    subtype       = models.CharField(max_length=1000,blank=True)
    disease       = models.CharField(max_length=500,blank=True)

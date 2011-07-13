@@ -218,6 +218,7 @@ def RegisterGSE(Dict,MetaI):
    dataset.plugin        = 'geo'
    ''' Metainfo part'''
    dataset.samples_count = MetaI.samples_count
+   dataset.incl_criteria = MetaI.incl_criteria
    dataset.treatment     = MetaI.treatment
    dataset.subtype       = MetaI.subtype
    dataset.disease       = MetaI.disease

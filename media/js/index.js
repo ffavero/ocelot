@@ -194,6 +194,7 @@ function xml2div(xml) {
   var samples   = '';
   var subtype   = '';
   var treatment = '';
+  var inclusion = '';
   // Starting the raw   
   xmlArr += "<div class='tabRow'>";
 
@@ -211,6 +212,7 @@ function xml2div(xml) {
    if ($(this).attr('name') == 'samples_count'){samples = $(this).text()};
    if ($(this).attr('name') == 'subtype'){subtype = $(this).text()};
    if ($(this).attr('name') == 'treatment'){treatment = $(this).text()};
+   if ($(this).attr('name') == 'incl_criteria'){inclusion = $(this).text()};
   });
   // Alias
   xmlArr += "<div class='tabCell alias'>";
@@ -315,6 +317,12 @@ function xml2div(xml) {
   treatmentTitle = treatment.replace(/,/g,'\n');  
   xmlArr += "<div class='tabCell treatment' title='"+ treatmentTitle +"'>";
   xmlArr += treatment;
+  //end of the cell 
+  xmlArr += '</div>';
+  // inclusion criteria
+  inclCrit = inclusion.replace(/,/g,'\n');  
+  xmlArr += "<div class='tabCell inclusion' title='"+ inclCrit +"'>";
+  xmlArr += inclCrit;
   //end of the cell 
   xmlArr += '</div>';
 

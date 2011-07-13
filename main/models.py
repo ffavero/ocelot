@@ -19,6 +19,7 @@ class Datasets(models.Model):
    saved         = models.DateField()
    released      = models.DateField()
    plugin        = models.CharField(max_length=50)
+   incl_criteria = models.CharField(max_length=1000,blank=True)
    treatment     = models.CharField(max_length=1000,blank=True)
    subtype       = models.CharField(max_length=1000,blank=True)
    disease       = models.CharField(max_length=500,blank=True)
