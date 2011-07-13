@@ -19,12 +19,12 @@ class Datasets(models.Model):
    saved         = models.DateField()
    released      = models.DateField()
    plugin        = models.CharField(max_length=50)
-   treatment     = models.CharField(max_length=1000)
-   subtype       = models.CharField(max_length=1000)
-   disease       = models.CharField(max_length=500)
-   alias_gds     = models.CharField(max_length=50)
-   platform_id   = models.CharField(max_length=200)
-   platform_name = models.CharField(max_length=1000)
+   treatment     = models.CharField(max_length=1000,blank=True)
+   subtype       = models.CharField(max_length=1000,blank=True)
+   disease       = models.CharField(max_length=500,blank=True)
+   alias_gds     = models.CharField(max_length=50,blank=True)
+   platform_id   = models.CharField(max_length=200,blank=True)
+   platform_name = models.CharField(max_length=1000,blank=True)
 
 class Ocelotqueue(models.Model):
    '''

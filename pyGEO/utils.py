@@ -262,15 +262,24 @@ def addDS(request):
    '''
    if request.is_ajax():
       if request.method == 'POST':
-         dslist =  simplejson.loads(request.raw_post_data)
-         for ds in dslist:
-            if not list(Dictionary.objects.raw('SELECT * FROM pyGEO_dictionary WHERE dataset_id = %s', [ds])):
-               dataset  = Dictionary(dataset_id = ds)
-               metainfo = MetaInfo(dataset_id = ds)
-               dataset.save()
-               metainfo.save()
-   return HttpResponseRedirect('/admin/geo/')
-
+         location =  request.POST['location']
+         if location == 'geo':
+            dslist   =  simplejson.loads(request.POST['data'])
+            for ds in dslist:
+               if not list(Dictionary.objects.filter(dataset_id__exact = ds)):
+                  dataset  = Dictionary(dataset_id = ds)
+                  metainfo = MetaInfo(dataset_id = ds)
+                  dataset.save()
+                  metainfo.save()
+            return HttpResponse('Dataset saved',mimetype="text/html")
+         elif location == 'index':
+            ds = request.POST['data']
+            dictionary  = Dictionary.objectsget(dataset_id__exact = ds)
+            metainfo    = MetaInfo.objects.get(dataset_id__exact = ds)            
+            RegisterGSE(dictionary,metainfo)
+            return HttpResponse('Dataset saved',mimetype="text/html")   
+         else:
+            return HttpResponse('Nothing Done',mimetype="text/html")
 @login_required(login_url='/accounts/login/')
 def rmDS(request):
    '''
@@ -288,8 +297,8 @@ def rmDS(request):
             metainf.delete()
          if list(indexed):
             indexed.delete()
-         return HttpResponseRedirect('/admin/geo/')
-         
+         return HttpResponse('Dataset removed',mimetype="text/html")
+
 def platformFreqs(platID):
    mat = list(MetaInfo.objects.all())
    plat_list = []

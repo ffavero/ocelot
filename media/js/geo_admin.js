@@ -1,5 +1,3 @@
-
-
 function initGEO() {
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
@@ -75,9 +73,17 @@ function addDS() {
     text = text.split('\n');
     var dslist = JSON.stringify(text)
     //alert(dslist);
-    $.post('/admin/geo/addDS/',dslist, function(){alert("Data Saved")},'json');
-    $(this).dialog("close");
-    location.reload();
+    $.ajax({
+     url:'/admin/geo/addDS/',
+     type:'post',
+     data:{data:dslist,location:'geo'},
+     dataType:'html',
+     async:true,
+     success: function(){
+      $(this).dialog("close");
+      location.reload();
+     }
+    });
    }
   }
  })
@@ -92,9 +98,17 @@ function removeDS(dataset) {
   resizable : false,
   buttons: {
    Remove : function(){
-     $.post('/admin/geo/rmDS/',dataset);
-    $(this).dialog("close");
-    location.reload();
+     $.ajax({
+      url:'/admin/geo/rmDS/',
+      type:'post',
+      data:dataset,
+      dataType:'html',
+      async:true,
+      success: function(){
+       $(this).dialog("close");
+       location.reload();
+      }
+     });
    },
    No : function(){
     $(this).dialog("close");

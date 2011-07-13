@@ -26,7 +26,7 @@ class MetaInfo(models.Model):
    suited to be in the Dictionary
    """
    dataset_id    = models.CharField(max_length=200)
-   samples_count = models.IntegerField()
+   samples_count = models.IntegerField(null=True)
    treatment     = models.CharField(max_length=1000,blank=True)
    subtype       = models.CharField(max_length=1000,blank=True)
    disease       = models.CharField(max_length=500,blank=True)
