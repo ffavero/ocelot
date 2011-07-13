@@ -77,7 +77,7 @@ def DSparse(request,dataset_id):
             treatments.append(treatment.strip())
       dis = dataset.disease.split(',')
       for disease in dis:
-         if disease not in disease:
+         if disease not in diseases:
             diseases.append(disease.strip())
       subtps = dataset.subtype.split(',')
       for subtype in subtps:
