@@ -1,7 +1,7 @@
 from __future__ import with_statement
 from settings import ROOT_PATH
 from urllib2 import urlopen, URLError
-import contextlib, gzip, re
+import contextlib, gzip, re, os
 from django.utils import simplejson
 from StringIO import StringIO
 from xml.etree import ElementTree as ET
