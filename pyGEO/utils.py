@@ -10,10 +10,9 @@ from urllib2 import urlopen, Request
 from urllib import urlencode
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
-import contextlib, bz2, gzip, re, os, io, zlib
+import contextlib, bz2, gzip, re, os, io, zlib, settings
 from django.contrib.auth.decorators import login_required
 from StringIO import StringIO
-from settings import ROOT_PATH
 
 def getGEOurl(acc,purpose):
    '''
@@ -315,18 +314,18 @@ def get_express(acc):
    gpls = GPL2title(acc)
    if len(gpls) == 1:
       series_file = acc + '_series_matrix.txt.gz'
-      if not os.path.isfile(ROOT_PATH + '/data/expressions/' + series_file):
+      if not os.path.isfile(settings.ROOT_PATH + '/data/expressions/' + series_file):
          getGEOexpr(acc,series_file)
    else:
       for gpl in gpls:
          series_file = acc + '-'+ gpl['id'] +'_series_matrix.txt.gz'
-         if not os.path.isfile(ROOT_PATH + '/data/expressions/' + series_file):
+         if not os.path.isfile(settings.ROOT_PATH + '/data/expressions/' + series_file):
             getGEOexpr(acc,series_file)
 
 def getGEOexpr(acc,filename):
    geo_expr_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/' + acc + '/' + filename
    out_path = '/data/expressions/'
-   out_file = ROOT_PATH + out_path + filename
+   out_file = settings.ROOT_PATH + out_path + filename
    print 'downloading ' + geo_expr_url
    find_start = re.compile('!series_matrix_table_begin')
    switch = 'OFF'
@@ -360,7 +359,8 @@ def getGEOexpr(acc,filename):
    with contextlib.closing(gzip.GzipFile(out_file,'wb')) as outfile:
       with contextlib.closing(StringIO(tmp)) as shorter:
          outfile.write(shorter.read())
-   os.chmod(out_file,0664)   
+   if settings.FILE_UPLOAD_PERMISSIONS is not None:
+      os.chmod(outfile, settings.FILE_UPLOAD_PERMISSIONS) 
    print 'Done\n'
 
 def geoXml(request,dataset_id):
@@ -368,7 +368,7 @@ def geoXml(request,dataset_id):
    Check if the file is alredy been downloaded,
    if not retrieve the xml from geo
    '''
-   filename = ROOT_PATH +'/data/gsms/' + dataset_id + '_gsms.xml.gz'
+   filename = settings.ROOT_PATH +'/data/gsms/' + dataset_id + '_gsms.xml.gz'
    if os.path.isfile(filename):
       with contextlib.closing(gzip.GzipFile(filename,'rb')) as geo:
          return HttpResponse(geo.read(),mimetype="text/xml")
@@ -378,5 +378,6 @@ def geoXml(request,dataset_id):
          tmp = geo.read()
       with contextlib.closing(gzip.GzipFile(filename,'wb')) as filein:
          filein.write(str(tmp))
-      os.chmod(filename,0664)
+      if settings.FILE_UPLOAD_PERMISSIONS is not None:
+         os.chmod(filename, settings.FILE_UPLOAD_PERMISSIONS)
       return HttpResponse(str(tmp),mimetype="text/xml")

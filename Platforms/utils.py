@@ -1,7 +1,6 @@
 from __future__ import with_statement
-from settings import ROOT_PATH
 from urllib2 import urlopen, URLError
-import contextlib, gzip, re, os
+import contextlib, gzip, re, os, settings
 from django.utils import simplejson
 from StringIO import StringIO
 from xml.etree import ElementTree as ET
@@ -12,7 +11,7 @@ def getGEOannot(acc,fields):
    geo_annot_url   = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/annotation/platforms/' + acc + '.annot.gz'
    alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
    out_path = '/data/annotations/'
-   out_file = ROOT_PATH + out_path + acc +'.json.gz'
+   out_file = settings.ROOT_PATH + out_path + acc +'.json.gz'
    def annot_parse(annot_platform,fields):
       find_start = re.compile('!platform_table_begin')
       switch = 'OFF'        
@@ -61,7 +60,8 @@ def getGEOannot(acc,fields):
    with contextlib.closing(StringIO(simplejson.dumps(tmp_dict))) as json_annot:
       with contextlib.closing(gzip.GzipFile(out_file,'wb')) as outfile:
          outfile.write(json_annot.read())
-   os.chmod(out_file,0664)
+   if settings.FILE_UPLOAD_PERMISSIONS is not None:
+      os.chmod(out_file, settings.FILE_UPLOAD_PERMISSIONS)
    print 'Done\n'
 
 def geo_annot_tab(acc,lines):
@@ -219,15 +219,18 @@ def get_geo_annot_split(acc,fields):
       tmp_json = tmp_dict
       res = parse_single_key(tmp_json,out)
       with contextlib.closing(StringIO(simplejson.dumps(res))) as json_annot:
-         output = ROOT_PATH + out_path + acc + '_' + out_dict[out] + '.json.gz'
+         output = settings.ROOT_PATH + out_path + acc + '_' + out_dict[out] + '.json.gz'
          with contextlib.closing(gzip.GzipFile(output,'wb')) as outfile:
             outfile.write(json_annot.read())
-         os.chmod(output,0664)
+         if settings.FILE_UPLOAD_PERMISSIONS is not None:
+            os.chmod(output, settings.FILE_UPLOAD_PERMISSIONS)
    with contextlib.closing(StringIO(simplejson.dumps(meta_dict))) as json_meta:
-      output = ROOT_PATH + out_path + acc + '_metainfo.json.gz'
+      output = settings.ROOT_PATH + out_path + acc + '_metainfo.json.gz'
       with contextlib.closing(gzip.GzipFile(output,'wb')) as outfile:
          outfile.write(json_meta.read())
-   os.chmod(output,0664)
+   if settings.FILE_UPLOAD_PERMISSIONS is not None:
+      os.chmod(output, settings.FILE_UPLOAD_PERMISSIONS)
+
    print 'Done\n'
 
 
