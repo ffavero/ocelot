@@ -359,7 +359,8 @@ def getGEOexpr(acc,filename):
                      switch = 'ON'
    with contextlib.closing(gzip.GzipFile(out_file,'wb')) as outfile:
       with contextlib.closing(StringIO(tmp)) as shorter:
-         outfile.write(shorter.read())   
+         outfile.write(shorter.read())
+   os.chmod(out_file,0664)   
    print 'Done\n'
 
 def geoXml(request,dataset_id):
@@ -377,4 +378,5 @@ def geoXml(request,dataset_id):
          tmp = geo.read()
       with contextlib.closing(gzip.GzipFile(filename,'wb')) as filein:
          filein.write(str(tmp))
+      os.chmod(filename,0664)
       return HttpResponse(str(tmp),mimetype="text/xml")

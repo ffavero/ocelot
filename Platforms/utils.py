@@ -60,7 +60,8 @@ def getGEOannot(acc,fields):
          tmp_dict = annot_parse(annot_platform,fields)
    with contextlib.closing(StringIO(simplejson.dumps(tmp_dict))) as json_annot:
       with contextlib.closing(gzip.GzipFile(out_file,'wb')) as outfile:
-         outfile.write(json_annot.read())   
+         outfile.write(json_annot.read())
+   os.chmod(out_file,0664)
    print 'Done\n'
 
 def geo_annot_tab(acc,lines):
@@ -221,10 +222,12 @@ def get_geo_annot_split(acc,fields):
          output = ROOT_PATH + out_path + acc + '_' + out_dict[out] + '.json.gz'
          with contextlib.closing(gzip.GzipFile(output,'wb')) as outfile:
             outfile.write(json_annot.read())
+         os.chmod(output,0664)
    with contextlib.closing(StringIO(simplejson.dumps(meta_dict))) as json_meta:
       output = ROOT_PATH + out_path + acc + '_metainfo.json.gz'
       with contextlib.closing(gzip.GzipFile(output,'wb')) as outfile:
-         outfile.write(json_meta.read())         
+         outfile.write(json_meta.read())
+   os.chmod(output,0664)
    print 'Done\n'
 
 
