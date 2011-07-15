@@ -360,7 +360,7 @@ def getGEOexpr(acc,filename):
       with contextlib.closing(StringIO(tmp)) as shorter:
          outfile.write(shorter.read())
    if settings.FILE_UPLOAD_PERMISSIONS is not None:
-      os.chmod(outfile, settings.FILE_UPLOAD_PERMISSIONS) 
+      os.chmod(out_file, settings.FILE_UPLOAD_PERMISSIONS) 
    print 'Done\n'
 
 def geoXml(request,dataset_id):
