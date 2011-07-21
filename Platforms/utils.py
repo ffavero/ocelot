@@ -66,15 +66,44 @@ def getGEOannot(acc,fields):
 
 def geo_annot_tab(acc,lines):
    geo_annot_url   = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/annotation/platforms/' + acc + '.annot.gz'
-   alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
+   #alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
+   alternative_url = 'http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?view=data&acc=' + acc + '&form=text'
    def annot_to_html(annot_platform,lines):
       find_start = re.compile('!platform_table_begin')
       switch  = 'OFF'
       counter = 0
       tmp_html = '<div id="annot_tab">'
       with contextlib.closing(StringIO(annot_platform.read())) as fbuffer:
-         with contextlib.closing(gzip.GzipFile(fileobj=fbuffer)) as unzipped:
-            for line in unzipped.readlines():
+         try:
+            with contextlib.closing(gzip.GzipFile(fileobj=fbuffer)) as unzipped:
+               for line in unzipped.readlines():
+                  if counter >= lines:
+                     switch = 'OFF'
+                     tmp_html += '</div><!--annot_tab-->'
+                     break
+                  if switch == 'ON':
+                     if line.startswith('ID'):
+                        line      = line.strip().replace('\"','').split('\t')
+                        tmp_html += '<div class="tab_row">'
+                        for name in line:
+                           tmp_html += '<div class="cellTitle" title="'+name+'">'+name+'</div>'
+                        tmp_html += '</div>'
+                     else:
+                        counter += 1
+                        line  = line.strip().replace('\"','').split('\t')
+                        tmp_html += '<div class="tab_row">'
+                        for name in line:
+                           tmp_html += '<div class="cell">'
+                           if len(name) >= 14:
+                              tmp_html += name[:10]+' ...</div>'
+                           else:
+                              tmp_html += name + '</div>'
+                        tmp_html += '</div>'
+                  if switch == 'OFF':
+                     if find_start.match(line):
+                        switch = 'ON'
+         except IOError:
+            for line in fbuffer.readlines():
                if counter >= lines:
                   switch = 'OFF'
                   tmp_html += '</div><!--annot_tab-->'
@@ -127,7 +156,8 @@ def get_geo_annot_split(acc,fields):
    parsing big json or XML file)
    '''
    geo_annot_url   = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/annotation/platforms/' + acc + '.annot.gz'
-   alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
+   #alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
+   alternative_url = 'http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?view=data&acc=' + acc + '&form=text'
    out_path = '/data/annotations/'
    out_dict = {}
    non_lit = re.compile(r'[\W]+')
@@ -147,8 +177,32 @@ def get_geo_annot_split(acc,fields):
          annot_lookup[field] = ''
       tmp_dict = {}
       with contextlib.closing(StringIO(annot_platform.read())) as fbuffer:
-         with contextlib.closing(gzip.GzipFile(fileobj=fbuffer)) as unzipped:
-            for line in unzipped.readlines():
+         try:
+            with contextlib.closing(gzip.GzipFile(fileobj=fbuffer)) as unzipped:
+               for line in unzipped.readlines():
+                  if re.search('!platform_table_end',line):
+                     switch = 'OFF'
+                     break
+                  if switch == 'ON':
+                     if line.startswith('ID'):
+                        line  = line.strip().replace('\"','').split('\t')
+                        names = line[1:]                  
+                        for position, name in enumerate(names):
+                           for item in annot_lookup.keys():
+                              if name == item:
+                                 annot_lookup[item] = position
+                     else:
+                        line  = line.strip().replace('\"','').split('\t')
+                        idref = line[0]
+                        accessions = line[1:]
+                        tmp_dict[idref] = {}
+                        for item in annot_lookup.keys():
+                           tmp_dict[idref][item] = accessions[annot_lookup[item]]
+                  if switch == 'OFF':
+                     if find_start.match(line):
+                        switch = 'ON'
+         except IOError:
+            for line in fbuffer.readlines():
                if re.search('!platform_table_end',line):
                   switch = 'OFF'
                   break
