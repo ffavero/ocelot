@@ -1,0 +1,5 @@
+*.pyc
+data/gsms/*
+data/expressions/*
+data/annotations/*
+*.sqlite
