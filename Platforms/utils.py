@@ -197,7 +197,8 @@ def get_geo_annot_split(acc,fields):
                         accessions = line[1:]
                         tmp_dict[idref] = {}
                         for item in annot_lookup.keys():
-                           tmp_dict[idref][item] = accessions[annot_lookup[item]]
+                           if len(accessions) -1 >= annot_lookup[item]:
+                              tmp_dict[idref][item] = accessions[annot_lookup[item]]
                   if switch == 'OFF':
                      if find_start.match(line):
                         switch = 'ON'
@@ -220,7 +221,7 @@ def get_geo_annot_split(acc,fields):
                      accessions = line[1:]
                      tmp_dict[idref] = {}
                      for item in annot_lookup.keys():
-                        if len(accessions) >= annot_lookup[item]:
+                        if len(accessions) -1 >= annot_lookup[item]:
                            tmp_dict[idref][item] = accessions[annot_lookup[item]]
                if switch == 'OFF':
                   if find_start.match(line):

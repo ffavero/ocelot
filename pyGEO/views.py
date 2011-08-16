@@ -144,7 +144,7 @@ def DSview(request,dataset_id):
    for p in platform_list:
       platform = Platform.objects.get(platform_id__exact = p)
       platforms.append(platform)
-   payload = dict( dictionary = model_to_dict(dictionary[0]) , platforms = platforms)
+   payload = dict( dictionary = model_to_dict(dictionary[0]), metainfo = model_to_dict(metainfo), platforms = platforms)
    payload.update(csrf(request))
    return render_to_response('geo_view.html', payload)    
 

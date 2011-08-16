@@ -26,6 +26,8 @@ html {
 
 #overlay {
  z-index:3000;
+ height:100px;
+ width:100px;
 }
 
 #waiting_warn {
@@ -35,19 +37,37 @@ html {
  margin-top:50px;
  background:#fff;
  width:33%;
- min-width:220px;
- height:50px;
+ height:40px;
  padding:5px;
 }
 
 #waiting_warn span{
  float:left; 
- margin-right:5px;
+ margin-left:50px;
+}
+
+#waiting_warn p{
+text-align:center;
 }
 
 #waiting_warn img {
- width:15px;
- margin-left:10px;
+ width:10px;
+ margin-left:50px;
+}
+
+.helpline{
+ margin:10px;
+ float:left;
+ display:block;
+ padding:10px;
+ font-size:12px;
+ max-width:450px;
+}
+
+.helpline img {
+ display:inline;
+ width:12px;
+ height:12px;
 }
 
 #header {
@@ -188,4 +208,24 @@ html {
 
 #csv_form {
  display:none;
+}
+
+.blue_point {
+ display:inline;
+ color:#fff;
+ background-image: url(img/blue_point.png);
+ width:20px;
+ height:20px;
+ line-height:20px;
+ text-align:center;
+ font-weight:bold;
+ margin:10px;
+}
+
+.right{
+ float:right;
+}
+
+.left{
+ float:left;
 }

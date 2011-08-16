@@ -25,10 +25,8 @@ function view(dataset) {
 
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
-   $(window).resize(function () {
-    $(this).width($(document).width());
-    $(this).height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
  $('#loading').ajaxStop(function(){
       $(this).fadeOut();
@@ -40,46 +38,82 @@ function view(dataset) {
  // Bind an event when select 
  // an item from the menu
  $('#annot_column').change(function() {
-  annotAutocomplete(jsonAnnot,$(this).val())
+//  annotAutocomplete(jsonAnnot,$(this).val())
+    setAutocomplete(currentAnnot,$(this).val());
+ });
+
+ $('#analysis_menu').change(function() {
+  // annotAutocomplete(jsonAnnot,$(this).val())
+    setAnalysisField($(this).val(),dataset);
  });
  $('#choose_plat').menu({
-    selected: function(event, ui) {
-     //remove the style of previously selected item, if any.
-     ui.item.parents().find('li').each(function(){
-      $(this).removeClass('ui-state-active ui-corner-all');
-     });
-     // set a different style to the selected item
-     ui.item.addClass('ui-state-active ui-corner-all');
-     // do something
-     selPlatform = ui.item.clone();
-     $(selPlatform).find('div').remove();
-     loadAnnotation($(selPlatform).text().replace(/\s/g,''),ui.item.find('a').attr('title'));
-    }
+  selected: function(event, ui) {
+   //remove the style of previously selected item, if any.
+   ui.item.parents().find('li').each(function(){
+    $(this).removeClass('ui-state-active ui-corner-all');
    });
-  // If there is only one platform set it automatically:
-  var platformNumber = $('#choose_plat > li').size();
-  if (platformNumber ==1 ) {
-   $('#choose_plat').find('li').addClass('ui-state-active ui-corner-all');
-   selPlatform = $('#choose_plat').find('.ui-state-active').clone();
+   // set a different style to the selected item
+   ui.item.addClass('ui-state-active ui-corner-all');
+   // do something else..
+   selPlatform = ui.item.clone();
    $(selPlatform).find('div').remove();
-   doAfter(1000, function () {
-   loadAnnotation($(selPlatform).text().replace(/\s/g,''),$('#choose_plat').find('a').attr('title'));
-   });
+   loadAnnotation($(selPlatform).text().replace(/\s/g,''),ui.item.find('a').attr('title'));
+  }
+ });
+ // If there is only one platform set it automatically:
+ var platformNumber = $('#choose_plat > li').size();
+ if (platformNumber ==1 ){
+  $('#choose_plat').find('li').addClass('ui-state-active ui-corner-all');
+  selPlatform = $('#choose_plat').find('.ui-state-active').clone();
+  $(selPlatform).find('div').remove();
+  loadAnnotation($(selPlatform).text().replace(/\s/g,''),$('#choose_plat').find('a').attr('title') );
  }
 
- //asyc call the xml to populate the Dictionary table:
+ // Check which and how many  fields are present 
+ // in the  dict_table and set the dialog width and
+ // the analysis menu according to it.
  columncount = 0;
  dictTags = [];
+ analysisMenu = { surv  :false,
+                  resp  :false,
+                  groups:true};
  $('#dictTable').find('.cellTitle').each( function() {
-   columncount = columncount + 1;
-   if ($(this).text()!='GSM') {
-    dictTags.push($(this).attr('title'));
-   }
+  columncount = columncount + 1;
+  if ($(this).text()!='GSM') {
+   dictTags.push($(this).attr('title'));
+   if ($(this).text().substring(0,4) == 'surv'){
+    analysisMenu['surv'] = true; 
+   };
+   if ($(this).text() == 'response'){
+    analysisMenu['resp'] = true; 
+   };
   }
- );
+ });
  $('#dict_table').css({'width': 20 + (columncount*125) });
+ 
+
+ if (analysisMenu['groups']){
+  $('#analysis_menu').append($("<option></option>").
+   attr("value",'grouplots').
+   text('Compare and analyze groups'));
+ };
+
+ if (analysisMenu['surv']){
+  $('#analysis_menu').append($("<option></option>").
+   attr("value",'kmlines').
+   text('Kaplan Meier Survival analysis'));
+  $('#analysis_menu').val('kmlines')
+ };
+ if (analysisMenu['resp']){
+  $('#analysis_menu').append($("<option></option>").
+   attr("value",'rocbees').
+   text('Response/non-response ROC curves and scatterplots'));
+  $('#analysis_menu').val('rocbees')
+ };
+ setAnalysisField($('#analysis_menu').val(),dataset);
+
  // style the hover action on the table button
- // and give it a proper onClick function
+ // and give him a proper onClick function
  $('#viewDict').hover(
   function() {
    $(this).attr({'src':'/media/css/img/tablehover.png'});
@@ -90,7 +124,8 @@ function view(dataset) {
  );
  $('#viewDict').click(
   function() {
-    $('#dictTable').dialog({
+    $('#dictTable').dialog(
+  {
    title: 'Clinical data for '+dataset,
    width: 800,
    height:400,
@@ -100,7 +135,7 @@ function view(dataset) {
     Close: function() {
          $( this ).dialog( 'close' );
       },
-   'Downlad as CSV': function() {
+   'Downlad as TXT': function() {
      var tmpCsv = '';
      $('#dictTable').find('.tab_row').each(function(){
       $(this).find('div').each(function(){
@@ -116,7 +151,13 @@ function view(dataset) {
    }
   })
  });
- // Ok now call the xml
+ // asyc call the xml to populate the Dictionary table:
+
+ customWarn = '<p>' +
+               '<span class="ui-icon ui-icon-info"></span>' +
+               '<strong>Please Wait</strong> while loading the dataset details <img src="/media/css/img/loading.gif" />' +
+              '</p>';
+ $('#waiting_warn').html(customWarn);
  $.ajax({
   url:'/geo/'+dataset+'/xml/',
   type: 'get',
@@ -127,6 +168,7 @@ function view(dataset) {
    $('#dict_table').append(dictDivTable);
   },
   error: function() {
+   $('#loading').hide();
    alert ("Sorry we could not get the clinical data!");
   }
  });
@@ -137,54 +179,323 @@ function view(dataset) {
   },
   text: true,
   disabled: true,
- }); 
- // 
-
- $('#do_analysis').click(function() {
-  doItbutton(dataset,"kmlines");
  });
 }
 
-function loadAnnotation(acc,longname) {
+function setAnalysisField(analysis,dataset){
+  $('#analysis_snippet').remove(); 
+  if (analysis == 'kmlines'){
+   kmlineActions(dataset);
+  }
+  if (analysis == 'rocbees'){
+   ROCbeeswarm(dataset);
+  }
+  if (analysis == 'grouplots'){
+   GroupsAnalysis(dataset);
+  }
+  $('#analysis_snippet').fadeIn('slow');
+
+}
+
+function kmlineActions(dataset) {
+ prepareAnalysis = function()  {}
+ kmlineSnippet ='<div id="analysis_snippet"> ' +
+                 '<div id="kmlines"> ' +
+                  '<div id="field_selector">'+
+                  ' <button id="kmlines_tot"></button>' +
+                  ' <button id="kmlines_rec"></button> '+
+                  '</div>'+
+                  '<div id="show_opts" class="ui-corner-all ui-widget-content"><b>Options</b>' +
+                  ' <span id="add_options" '+
+                  '  class="ui-icon ui-icon-circle-plus">'+
+                  ' </span>'+
+                  ' <div id="kmlines_opts">'+
+                  '  <div class="ui-corner-all ui-widget-content kmlines_opt">'+
+                  '   <div id="group_cutoff" class="kmlines_opt_title">Groups cutoff</div>'+
+                  '   <div id="slider_val">0.5</div>'+
+                  '   <div id="prop_slider"></div>'+
+                  '  </div>'+
+                  ' </div>'+
+                  '</div>'+
+                 '</div><!--kmlines-->'+
+                '</div><!--analysis_snippet-->'
+ // Append the kmlines snippet (silently) 
+ // in the right place and enable the functionality... 
+ paths = [];
+ $('#dict_table').find('.cellTitle').each( function(){
+  paths.push($(this).text());
+ });
+ $(kmlineSnippet).appendTo('#choose_analysis').hide();
+ $('#kmlines_tot').button({
+  label: "Overall Survival"
+ });
+ $('#kmlines_rec').button({
+  label: "Rec. free Surv."
+ });
+ fields = ['surv_tot','event_tot'];
+ // hmm.. the active class have problem
+ // when hover on the button... so the error
+ // class suits better, even if it might be
+ // confusing.. __it's not an error, just for the
+ // style__
+ $('#kmlines_tot').addClass('ui-state-error'); 
+ if ($.inArray('surv_rec',paths) < 0){
+  $('#kmlines_rec').button("disable")
+ }
+ if ($.inArray('surv_tot',paths) < 0){
+  fields = ['surv_rec','event_rec'];
+  $('#kmlines_tot').button("disable");
+  $('#kmlines_rec').addClass('ui-state-error');
+ }
+ $('#kmlines_rec').click(function() {
+   fields = ['surv_rec','event_rec'];
+   $('#kmlines_tot').removeClass('ui-state-error');
+   $('#kmlines_rec').addClass('ui-state-error');
+ });
+ $('#kmlines_tot').click(function() {
+  fields = ['surv_tot','event_tot'];
+  $('#kmlines_rec').removeClass('ui-state-error');
+  $('#kmlines_tot').addClass('ui-state-error');
+ });
+ $('#add_options').click(function(){
+  $(this).toggleClass('ui-icon-circle-minus')
+  $('#kmlines_opts').slideToggle("fast");
+ });
+ $('#prop_slider').slider({
+  min:0,
+  max:1,
+  step:0.01,
+  value:0.5,
+  slide: function( event, ui ) {
+   $( '#slider_val' ).text( ui.value );
+  }   
+ });
+
+ $('#do_analysis').click(function() {
+  idRef =  $('#selected_id').text().replace(/\n/g,'');
+  idRef =  idRef.replace(/\"/g,'');
+  idRef =  idRef.replace(/ /g,'');
+  title = '';
+  if (fields[0].substring(5)=='tot') {
+   title = 'Overall';
+  } else {
+   title = 'Recurrence free';
+  }
+  title += ' survival: '+dataset +' probe: ';
+  title += $('#selected_id').text();
+  doItbutton(dataset,idRef,"kmlines",fields,title,$('#slider_val').text(),fields[0].substring(5));
+ });
+}
+
+function ROCbeeswarm(dataset) {
+ //redefine the prepareAnalysis function to
+ //populate the analysis menu once a gene/probe
+ // have been selected
+ prepareAnalysis = function()  {
+  indexResponse = '';
+  $('#dict_table').find('.cellTitle').each( function(index){
+   if ($(this).text() == 'response') {
+    indexResponse = index
+   };
+  });
+  responseCategories = [];
+  $('#dict_table').find('.tab_row').each(function(index){
+   $(this).find('.cell').each(function(index){
+    if (index == indexResponse) {
+     respText = $(this).text();
+     respText = respText.replace(/\n/g,'').replace(/^\s+/g, "").replace(/\s+$/g, "");
+     responseCategories.push(respText);
+    }
+   });
+  });
+  responseCategories = _.unique(responseCategories);
+  $('#roc_info').find('option').remove();
+  if (responseCategories.length > 1 ) {
+   $(responseCategories).each(function(index){
+    $('#roc_info').append($("<option></option>").
+           attr("value",responseCategories[index]).
+           text(responseCategories[index]));   
+   });
+  } else {
+   $('#roc_info').append($("<option></option>").
+           attr("value",'No Categories').
+           text('Select a probe first'));   
+  }
+ }
+
+ ROCbeesSnippet ='<div id="analysis_snippet"> ' +
+                  '<div id="ROCbees"> ' +
+                   '<div id="field_selector">'+
+                   '</div>'+
+                   '<div id="show_opts" class="ui-corner-all ui-widget-content"><b>ROC curves</b>' +
+                   ' <div id="ROC_infos">Chose a response category:'+
+                   '  <select id="roc_info" class="ui-widget-content ui-corner-all">' +
+                   '  </select>' +
+                   '  </div>'+
+                   ' </div>'+
+                   '</div>'+
+                  '</div><!--ROCbees-->'+
+                 '</div><!--analysis_snippet-->'
+ // Append the kmlines snippet (silently) 
+ // in the right place and enable the functionality... 
+ fields = ['response'];
+ $(ROCbeesSnippet).appendTo('#choose_analysis').hide();
+ prepareAnalysis();
+ $('#do_analysis').click(function() {
+  idRef =  $('#selected_id').text().replace(/\n/g,'');
+  idRef =  idRef.replace(/\"/g,'');
+  idRef =  idRef.replace(/ /g,'');
+  choiceResp = $('#roc_info').val();
+  title  = ' Response: '+dataset +' for category '+choiceResp+'; probe: ';
+  title += $('#selected_id').text();
+  toggleResp = choiceResp.replace(/\s/g,'');
+  doItbutton(dataset,idRef,"rocbees",fields,title,choiceResp,toggleResp);
+ });
+}
+
+
+function GroupsAnalysis(dataset) {
+ //redefine the prepareAnalysis function to
+ //populate the analysis menu once a gene/probe
+ // have been selected
+ prepareAnalysis = function()  {
+ }
+
+ GroupingSnippet ='<div id="analysis_snippet"> ' +
+                   '<div id="Grouping"> ' +
+                    '<div id="field_selector">'+
+                    '</div>'+
+                    '<div id="show_opts" class="ui-corner-all ui-widget-content"><b>Groups</b>' +
+                    '</div>'+
+                   '</div><!--Grouping-->'+
+                  '</div><!--analysis_snippet-->'
+ // Append the kmlines snippet (silently) 
+ // in the right place and enable the functionality... 
+ $(GroupingSnippet).appendTo('#choose_analysis').hide();
+ prepareAnalysis();
+ $('#do_analysis').click(function() {
+
+ });
+}
+
+function loadAnnotation(gpl,longname) {
  // load annotation file and then set it
  // to be used in the autocomplete
- $.ajax({
-  url:'/annotation/',
-  type: 'post',
-  async:true,
-  data: {gpl : acc},
-  dataType:'json',
-  success: function(json) {
-   //set the annotation in the page
-   jsonAnnot = json;
-   // Empty the existing options
-   // in the menu
-   $('#annot_column').empty();
-   // take the first node and
-   // collect the keys to put 
-   // in the annotation menu
-   $.each(json, function(item,values){
-    $.each(values, function(key,value) {
+ autocompletearr = [];
+ if (currentAnnot != gpl) {
+ customWarn = '<p>' +
+               '<span class="ui-icon ui-icon-info"></span>' +
+               '<strong>Please Wait</strong> while loading the platform annotation<img src="/media/css/img/loading.gif" />' +
+              '</p>';
+ $('#waiting_warn').html(customWarn);
+  $.ajax({
+   url:'/annotation/',
+   type: 'post',
+   data: {gpl : gpl},
+   dataType:'json',
+   async:true,
+   success: function(json) {
+    //set the annotation in the page
+    currentAnnot = gpl;
+    // Empty the existing options
+    // in the menu
+    $('#annot_column').empty();
+    // take the first node and
+    // collect the keys to put 
+    // in the annotation menu
+    $.each(json['indexes'], function(item,values){
      $('#annot_column').append($("<option></option>").
-          attr("value",key).
-          text(key));
+      attr("value",values).text(item));
     });
-    return false 
-   });
-   // Set the default value for the 
-   // annotation to pick
-   $('#annot_column').val('Gene symbol');
-   annotAutocomplete(json,$('#annot_column').val());
-  },
-  error: function() {
-   $('#annot_column').empty();
-   alert ("Sorry, we could not load this annotation");
-  }
- });
+    // Set the default value for the 
+    // annotation to pick
+   $('#annot_column').val(json['default']);
+   // Call the function to set the autocomplete
+   setAutocomplete(gpl,$('#annot_column').val());
+   },
+   error: function() {
+    $('#loading').hide();
+    // Empty the existing options
+    $('#annot_column').empty();
+    alert ("Sorry, we could not load this annotation");
+   }
+  });
+ }
  $('#selected_chip').html('<b>Using platform:</b></br>'+longname);
 }
 
+function setAutocomplete(gpl,annot){
+ customWarn = '<p>' +
+               '<span class="ui-icon ui-icon-info"></span>' +
+               '<strong>Please Wait</strong> while loading the selected annotation details<img src="/media/css/img/loading.gif" />' +
+              '</p>';
+ $('#waiting_warn').html(customWarn);
+  $.ajax({
+   url:'/annotation/',
+   type: 'post',
+   data: {gpl : gpl,purpose: annot},
+   dataType:'json',
+   async:true,
+   success: function(json) {
+    $('#gene_id').autocomplete({
+     source: json['index'],
+     minLength:3,
+     select: function(event, ui){
+      $('#selected_warning').remove();
+      $('#results_viewer').fadeOut('slow');
+      $('#results_viewer').empty();
+      //$('#results_viewer').find('img').remove();
+      $('#unique_probe_menu').remove();
+      $('#selected_probe').remove();
+      listFromJson = json['turnd'][ui.item.value];  
+      // Check if the chosen ID have multiple 
+      // identifiers or it is unique.
+      if (listFromJson.length > 1) {
+       uniqueGeneMenu(json['annot'],listFromJson);
+      } else {
+       $('#gene_id').val('');
+       selectedID = listFromJson[0];  
+       text = JSON.stringify(json['annot'][selectedID]);
+       text = text.replace(/\{/g,' ');
+       text = text.replace(/\}/g,' ');
+       text = text.replace(/\"/g,'');
+       text = text.replace(/\n/g,'');
+       text = text.replace(/:/g,'=>');
+       selectedProbe = '<div id="selected_probe" class="ui-corner-all ui-state-highlight"><span class="ui-icon ui-icon-info"></span>Selected gene is: <div id="selected_id">'+selectedID+'</div> ( '+text+' )</div>';
+       $(selectedProbe).appendTo('#unique_probe');
+       $('#do_analysis').button('enable');
+       prepareAnalysis();
+      }
+      ui.item.value = '';
+     },
+     change: function(event, ui) {
+      if ($('#selected_probe').exists() || $('#unique_probe_menu').exists()) {
+      // Do nothing
+      } else {
+       $('#selected_warning').remove();
+       selectWarn = '<div id="selected_warning" class="ui-corner-all ui-state-error"><span class="ui-icon ui-icon-alert"></span><strong>Warning</strong> You have to select a probe/gene in order to proceed</div>';
+       $(selectWarn).appendTo('#unique_probe');
+      }
+     },
+    })
+   },
+   error: function() {
+    $('#loading').hide();
+    // Empty the existing options
+    $('#annot_column').empty();
+    alert ("Sorry, we could not load this annotation");
+   }
+  });
+}
+
+
 function annotAutocomplete(json,annot) {
+ // This function were used "before" when the wole
+ // annotation file were provided, so the parsing 
+ // and reversing the annotation file was left to 
+ // compute from the browser. Good for new cpu, but
+ // slow in others, so now we provide pre-parsed 
+ // json files, and we work on ajax requests instead
  // Traversing the JSON file
  autocompleteAnnot = [];
  jsonTMP  = new Object();
@@ -235,7 +546,6 @@ function annotAutocomplete(json,annot) {
    ui.item.value = '';
   },
   change: function(event, ui) {
-
    if ($('#selected_probe').exists() || $('#unique_probe_menu').exists()) {
     // Do nothing
    } else {
@@ -250,7 +560,6 @@ function annotAutocomplete(json,annot) {
 function uniqueGeneMenu(json,list) {
  var itemList = '<div id="unique_probe_menu">';
  $(list).each(function(index){
-  itemList[listFromJson[index]] = [];
   lineConts = JSON.stringify(json[list[index]]);
   lineConts = lineConts.replace(/\{/g,' ');
   lineConts = lineConts.replace(/\}/g,' ');
@@ -266,18 +575,38 @@ function uniqueGeneMenu(json,list) {
 //    alert( ui.item.find('a').attr('title'));
     selectedID = ui.item.find('a').attr('title');
     text       = ui.item.text();
-    $('#unique_probe_menu').remove();
-    selectedProbe = '<div id="selected_probe" class="ui-corner-all ui-state-highlight"><span class="ui-icon ui-icon-info"></span>Selected gene is: <div id="selected_id">'+selectedID+'</div> ( '+text+' )</div>';
+    $('#toggleProbes').remove();
+    $('#selected_probe').remove();
+    //$('#unique_probe_menu').remove();
+    //$('#unique_probe_menu').slideUp("fast");
+    //toggleProbesMenu = '<button id="toggleProbes">Probes Menu</button>'; 
+    selectedProbe    = '<div id="selected_probe" class="ui-corner-all ui-state-highlight"><span class="ui-icon ui-icon-info"></span>Selected gene is: <div id="selected_id">'+selectedID+'</div> ( '+text+' )</div>';
+    /*$(toggleProbesMenu).appendTo('#unique_probe');
+    $('#toggleProbes').button({
+     icons: {
+             secondary: "ui-icon-circle-triangle-e"
+            }
+    });
+    $('#toggleProbes').click(function(){
+     $('#unique_probe_menu').slideToggle("slow");
+     $('#toggleProbes').hide();
+    });
+    $('#unique_probe_menu').slideUp("slow",function(){
+     $(selectedProbe).appendTo('#unique_probe');
+    });   
+    */
     $(selectedProbe).appendTo('#unique_probe');
+    
     $('#gene_id').val('');
     $('#do_analysis').button('enable');
+    prepareAnalysis();
    }, 
  });
 }
 
 function geodicttab(xml,dicttags) {
   dictTable = '';
- // We can parse the xml and start to populate the file 
+ //We can parse the xml and start to populate the file 
  // with know tags from the Dictionary. Also while we parse 
  // the file we add the number of samples for platform
  $(xml).find('Sample').each(function(){
@@ -306,12 +635,11 @@ function geodicttab(xml,dicttags) {
 }
 
 function dictTabtoJSON (fields) {
-// Collect all the select field from the table
-// and put it in a dictionary-like object
-
+// Collect all the select field in the
+// fields Array from the table and
+// put it in a dictionary-like object
  results = new Object();
  paths = [];
-
  $('#dict_table').find('.cellTitle').each( function(){
   paths.push($(this).text());
  });
@@ -338,48 +666,66 @@ function dictTabtoJSON (fields) {
  return JSON.stringify(results);
 }
 
-function doItbutton (dataset,analysis) {
+function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
+ $('#results_viewer').fadeIn('slow');
  // collect the 3 info (filename, probe name and
  // selected clinical data) to pass to theserver
-
- // ID_REF:
- idRef =  $('#selected_id').text().replace(/\n/g,'');
- idRef =  $('#selected_id').text().replace(/\"/g,'');
- idRef =  $('#selected_id').text().replace(/ /g,'');
  //File name
  var filename='';
  var platformNumber = $('#choose_plat > li').size();
- if (platformNumber ==1 ){
+ if (platformNumber == 1 ){
    filename = dataset;
  } else {
    selPlatform = $('#choose_plat').find('.ui-state-active').clone();
    $(selPlatform).find('div').remove();
    filename = dataset+'-'+$(selPlatform).text().replace(/\s/g,'');
  }
- // For now dummy setted...
- fields = ['surv_tot','event_tot'];
+
  dataJSON = dictTabtoJSON (fields);
  //Now we can submit the data to the server
  // with an AJAX call (and see the results on the same page):
+
+ customWarn = '<p>' +
+               '<span class="ui-icon ui-icon-info"></span>' +
+               '<strong>Please Wait</strong> while performing the analysis<img src="/media/css/img/loading.gif" />' +
+              '</p>';
+ $('#waiting_warn').html(customWarn);
  $.ajax({
   url:'/microarrpy/',
   data: {
    data_json : dataJSON,
    file_code : filename,
    id_ref : idRef,
-   test : analysis,
-   format: 'png'
+   test: analysis,
+   format:'png',
+   title:title,
+   opts:options,
+   toggle:toggle
   },
   type: 'post',
   dataType:'html',
   async:true,
   success: function(res) {
+   $('#results_viewer').hide();
    $('#results_viewer').empty();
+   //$('#results_viewer').find('img').remove();
    $('#results_viewer').append(res);
+   $('#results_viewer').fadeIn('slow');
   },
   error: function() {
    alert ("Sorry we could't analyze the data!");
   }
  });
+}
+
+function prepareAnalysis() {
+ //Empty function replaced with
+ //some operation "analysis specific"
+}
+
+
+function downloadIMG(imgName) {
+ $('#img_name').val(imgName);
+ $('#download_image').submit();
 }
 

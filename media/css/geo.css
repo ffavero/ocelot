@@ -264,11 +264,32 @@ border-collapse:separate;*/
  width:100%;
 }
 
+#meta_info {
+ float:left;
+ display:block;
+ min-height:30px;
+ width:70%;
+ min-width:1024px;
+}
+
+#meta_info p {
+ margin:10px;
+ font-size:18px;
+}
+
+#viewDict {
+ display:inline;
+ margin-left:5px;
+ width:18px;
+ height:18px;
+}
+
 #viewer_head{
  float:left;
  display:block;
- width:100%;
- height:130px;
+ width:70%;
+ min-width:1024px;
+ min-height:130px;
 }
 
 #choose_plat {
@@ -290,7 +311,7 @@ border-collapse:separate;*/
 #choose_gene {
  float:left;
  display:block;
- width:270px;
+ width:310px;
  min-height:80px;
 }
 
@@ -300,8 +321,8 @@ border-collapse:separate;*/
  margin:10px;
  margin-right:0px;
  margin-bottom:3px;
- width:90px;
- height:30px;
+ width:120px;
+ height:32px;
  padding:5px;
 }
 
@@ -316,10 +337,23 @@ border-collapse:separate;*/
  padding:5px;
 }
 
+#unique_probe_menu {
+ float:left;
+ display:block;
+}
+
 #unique_probe {
  float:left;
  display:block;
+ margin:10px; 
+}
+
+#toggleProbes {
+ float:left;
+ display:block;
  margin:10px;
+ width:80px;
+ height:50px;
 }
 
 #selected_probe { 
@@ -349,17 +383,10 @@ border-collapse:separate;*/
 #viewerButtons {
  float:left;
  display:block;
- width:330px;
+ width:70%;
+ min-width:1024px;
  height:400px
  margin:10px;
-}
-
-#viewDict {
- float:left;
- display:block;
- margin:10px;
- width:30px;
- height:30px;
 }
 
 #choose_analysis {
@@ -368,7 +395,94 @@ border-collapse:separate;*/
  margin:10px;
  width:220px;
  height:220px;
- background:grey;
+}
+
+#analysis_menu{
+ float:left;
+ display:block;
+ width:220px;
+ height:40px;
+}
+
+/* Kaplan Meier Option */
+
+#analysis_snippet {
+ float:left;
+ display:block;
+ text-align:center;
+ margin:10px;
+}
+
+#kmlines button {
+ float:left;
+ display:block;
+ margin:10px;
+ width:80px;
+ height:60px;
+}
+
+#show_opts {
+ float:left;
+ display:block;
+ min-height:15px;
+ width:200px;
+}
+
+#add_options {
+ float:left;
+ display:block;
+}
+
+#kmlines_opts {
+ display:none;
+}
+
+.kmlines_opt {
+ display:block;
+ float:left;
+ width:180px;
+ margin-bottom:10px;
+ margin-left:10px;
+}
+
+.kmlines_opt_title {
+ display:block;
+ float:left;
+ width: 50px;
+ height:50px;
+ line-height:25px;
+}
+
+#slider_val {
+ float:right;
+ width:80px;
+ margin:10px;
+ margin-left:3px;
+}
+
+#prop_slider {
+ float:right;
+ display:block;
+ width:80px;
+ margin:10px;
+ margin-left:3px;
+}
+/* ROC and beeswarm Option */
+
+#roc_info {
+ float:right;
+ display:block;
+ margin:10px;
+ height:30px;
+ line-height:30px;
+ width:150px;
+}
+
+#ROC_infos{
+ float:left;
+ display:block;
+ margin:10px;
+ text-align:left;
 }
 
 #do_analysis {
@@ -386,16 +500,29 @@ border-collapse:separate;*/
 
 #results_viewer {
  float:left;
- display:block;
- margin:10px;
- margin-left:50px;
- width:630px;
- height:400px;
- background:grey;
+ display:none;
+ width:70%;
+ min-width:1024px;
+ height:420px;
 }
 
 #results_viewer img {
- width:630px;
+ width:800px;
  height:400px;
+ margin:10px;
 }
 
+#image_actions {
+ float:right;
+ display:block;
+ margin:10px;
+}
+
+#image_actions button {
+ float:left;
+ display:block;
+ width:80px;
+ height:30px;
+ font-size:9px;
+ text-align:center;
+}

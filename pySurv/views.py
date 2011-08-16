@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from settings import ROOT_PATH
 import rpy2.robjects as robjects
 from   rpy2.robjects.packages import importr
-import io, re, gzip, contextlib
+import io, os, re, gzip, contextlib
 
 def analyze(request):
    '''
@@ -21,69 +21,169 @@ def analyze(request):
       json_data = simplejson.loads(data['data_json'])
       test      = data['test']
       format    = data['format']
+      title    = data['title']
+      opts     = data['opts']
+      toggle   = data['toggle']
       outPATH   = '/media/tmp/'
       expr_PATH = '/data/expressions/'
-      out_file = test + data['file_code'] + id_ref +'.' +format
+      out_file  = test + '_' + toggle +'_' + opts.replace(':','').replace('.','').replace(' ','').strip() + '_' + data['file_code'] + '_' + id_ref + '.' + format;
       # Parse the expression data
       find_id = re.compile('^' + id_ref + '\t')
       merged_data = {}
-      with contextlib.closing(gzip.GzipFile(ROOT_PATH + expr_PATH + file_name,'rb')) as fexpr:
-         samples = fexpr.readline().strip().split('\t')[1:]
-         for line in fexpr.readlines():
-            if find_id.match(line):
-               expr = line.strip().split('\t')[1:]
-               for position, sample in enumerate(samples):
-                  if json_data[sample]:
-                     merged_data[sample] = json_data[sample]
-                     merged_data[sample]['expression'] = expr[position]
-               break 
-      if test == 'kmlines':
-         kmlines(merged_data,ROOT_PATH + outPATH + out_file)
-      res = '<img src="'+outPATH+out_file+'"/>'
-      return HttpResponse(res, content_type='text/html')
-   #else:
-   #   return HttpResponseRedirect('/')
+      if os.path.isfile(ROOT_PATH + '/media/tmp/' + out_file):
+         res = '<img src="'+ outPATH + out_file + '"/>'
+         res += '<div id="image_actions">'
+         res += ' <button type="button" onclick="downloadIMG(\''+ outPATH+out_file + '\')" class="ui-button ui-button-text-icons ui-state-default ui-corner-all" title="Download image">'
+         res += '  <span class="ui-button-icon-secondary ui-icon ui-icon-disk"></span>'
+         res += '  <span class="ui-button-text">Download image</span>'
+         res += ' </button>'
+         res += '</div><!--image_actions-->'
+         return HttpResponse(res, content_type='text/html')
+      else:
+         with contextlib.closing(gzip.GzipFile(ROOT_PATH + expr_PATH + file_name,'rb')) as fexpr:
+            samples = fexpr.readline().strip().split('\t')[1:]
+            for line in fexpr.readlines():
+               if find_id.match(line):
+                  expr = line.strip().split('\t')[1:]
+                  for position, sample in enumerate(samples):
+                     if json_data[sample]:
+                        merged_data[sample] = json_data[sample]
+                        merged_data[sample]['expression'] = expr[position]
+                  break
+         argvs = {'file' : out_file, 'data' : merged_data, 'title' : title, 'opts' :opts}
+         if test == 'kmlines':
+            res = kmlines(argvs)
+         if res == out_file:
+            res = '<img src="'+ outPATH + out_file + '"/>'
+            res += '<div id="image_actions">'
+            res += ' <button type="button" onclick="downloadIMG(\''+ outPATH+out_file + '\')" class="ui-button ui-button-text-icons ui-state-default ui-corner-all" title="Download image">'
+            res += '  <span class="ui-button-icon-secondary ui-icon ui-icon-disk"></span>'
+            res += '  <span class="ui-button-text">Download image</span>'
+            res += ' </button>'
+            res += '</div><!--image_actions-->'
+         else:
+            res = '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">'
+            res += '<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>'
+            res += '<strong>Error:</strong> Sorry something went wrong while processing. The error might be due to the poor results for the selected probe. Try another gene/probe or contact us to investigate further the problem.</p></div>'
+         return HttpResponse(res, content_type='text/html')
+   else:
+      response = HttpResponse('Access Forbidden', content_type='text/html')
+      response.status_code = 403
+      return response
 
-
-def kmlines(data,filename):
+def kmlines(ARGVS):
    '''
    Kaplan Meier estimation
    '''
    survplot = importr('survplot')
    Cairo = importr('Cairo')
+   filename = ARGVS['file']
+   data     = ARGVS['data']
+   title    = ARGVS['title']
+   cutpoint = ARGVS['opts']
+   filewrite = ROOT_PATH + '/media/tmp/' + filename 
    time    = []
    event   = []
-   expr    = [] 
+   expr    = []
    names = data.keys()
    for name in names:
       time.append(data[name]['surv'])
       event.append(data[name]['even'])
       expr.append(data[name]['expression'])
    robjects.r ('''
-      KMLines <- function(filename,time,event,expr,separator=0.5, main='') {
-       CairoPNG(filename=filename,width = 1280, height = 800)
-       time  = as.numeric(time)
-       event = as.numeric(event)
-       expr  = as.numeric(expr)       
-       surv <- Surv(time,event)
-       separator = 1/separator
-       ord = expr[order(expr)]
-       mid = as.integer(length(expr)/separator)
-       par(mfrow=c(1,2),omi=c(1,1,1,0))
-       plot(y = ord, x = c(1:length(ord)),type='n',xlab='Samples',ylab='eV')
-       lines(y=ord[1:mid],x=c(1:mid),col='red')
-       lines(y=ord[mid:length(ord)],x=c(mid:length(ord)),col='green')
-       segments(x0 = mid, y0=ord[1], x1=mid,y1=ord[mid],lty=4,lwd=0.5)
-       segments(x0 = 0, y0=ord[mid], x1=mid,y1=ord[mid],lty=4,lwd=0.5)
-       groups = as.numeric(expr >= ord[mid])
-       groups[groups==0] <- "Group A"
-       groups[groups==1] <- "Group B"
-       groups <-as.factor(groups)
-       survplot (Surv(time,event) ~ groups, col=c('red','green'),xlab = 'Time', ylab = 'Fraction')
-       title(main,outer=TRUE)
-       #survplot(surv ~ cutn(t(expr)))
-       dev.off()
-      }
+    plotdistA <- function (filename,expr,event,time,cutpoint = 0.5, main='') {
+     time  = as.numeric(time)
+     event = as.numeric(event)
+     expr  = as.numeric(expr)
+     cutpoint = as.numeric(cutpoint) 
+     CairoPNG(filename=filename,width = 800, height = 400)
+     myCols <- c('black', 'red')
+     ord = order(expr)
+     cutpoint = expr[ord][as.integer(length(expr)*cutpoint)]
+     mid = as.integer(length(expr)/cutpoint)
+     xlim <- range(time, na.rm = TRUE)
+     ylim <- range(expr, na.rm = TRUE)
+     groups <- cut(expr, 
+      breaks = c(ylim[1], cutpoint, ylim[2]),
+      include.lowest = TRUE)
+     par(oma = c(0, 0, 1, 8), mar = c(5,4,2,2)+0.1, las = 1)
+     layout(matrix(1:2, nrow = 1), widths = c(1,1.5))
+     plot(expr[ord],
+      col = myCols[as.numeric(groups)][ord],
+      xlab='Samples',ylab='Expression')
+     abline(h = cutpoint, lty = 4)
+     par(xpd = NA)
+     survplot (Surv(time,event) ~ groups, 
+      col=myCols,
+      legend.pos = list(x = xlim[2], y = 0.25),
+      hr.pos = list(x = xlim[2], y = 1),
+      xlab = 'Time', ylab = 'Fraction')
+     title(main,outer=TRUE)
+     dev.off()
+    }
    ''')
-   robjects.r['KMLines'](filename = filename, time = time , event = event, expr = expr)
-
+   try:
+      robjects.r['plotdistA'](filename = filewrite, time = time , event = event, expr = expr, cutpoint = cutpoint, main = title)
+      return filename
+   except:
+      return 'Error'
+def rocbees(ARGVS):
+   '''
+   ROC curves and the beeswarm plot 
+   from beeswarm R package
+   '''
+   beeswarm = importr('beeswarm')
+   Cairo = importr('Cairo')
+   ROC   = importr('ROC')
+   filename = ARGVS['file']
+   data     = ARGVS['data']
+   title    = ARGVS['title']
+   category = ARGVS['opts']
+   filewrite = ROOT_PATH + '/media/tmp/' + filename 
+   resp    = []
+   expr    = []
+   names = data.keys()
+   for name in names:
+      resp.append(data[name]['resp'])
+      expr.append(data[name]['expression'])
+   robjects.r ('''
+    approx3 <- function(x, y = NULL, theta = 0.001) {
+     xy <- xy.coords(x, y)
+     dx <- diff(xy$x)/(max(xy$x) - min(xy$x))
+     dy <- diff(xy$y)/(max(xy$y) - min(xy$y))
+     angle <- atan2(dy, dx)
+     diff.angle <- diff(angle)%%pi
+     abs.diff.angle <- pmin(diff.angle, pi - diff.angle)
+     keep <- c(TRUE, abs.diff.angle > theta, TRUE)
+     xy$x <- xy$x[keep]
+     xy$y <- xy$y[keep]
+     xy
+    }
+    aronroc <- function(x, truth, type = "l", xlab = expression(1 -
+     specificity), ylab = "Sensitivity", ...) {
+     require(ROC)
+     r <- rocdemo.sca(truth, x)
+     xy <- list(x = 1 - r@spec, y = r@sens)
+     xy.trimmed <- approx3(xy)
+     plot(xy.trimmed, type = type, xlab = xlab, ylab = ylab, ...)
+     invisible(xy.trimmed)
+    }
+    plotResps <- function (filename,expr,resp,category, main='') {
+     expr  = as.numeric(expr)
+     resp  = as.character(resp)
+     CairoPNG(filename=filename,width = 800, height = 400)
+     par(oma = c(0,0,1,0))
+     layout(matrix(1:2, nrow = 1), widths = c(1,1))
+     beeswarm(expr ~ resp,col=c(1:length(unique(resp))),
+      pch=16,xlab='Response Categories', ylab='Expression')
+     par(xpd = NA)
+     aronroc (expr, resp == category)
+     title(main,outer=TRUE)
+     dev.off()
+    }    
+   ''')
+   try:
+      robjects.r['plotResps'](filename = filewrite, expr = expr, resp = resp, category = category, main = title)
+      return filename
+   except:
+      return 'Error'

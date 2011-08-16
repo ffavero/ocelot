@@ -10,7 +10,7 @@
    doAfter = function(time, f) {
      setTimeout(f, time);
    };
-   jsonAnnot = [];
+   currentAnnot = '';
    $(document).ready(function() {
     $('#contents').css('display', 'none');
     doAfter(50,function () {
@@ -35,7 +35,25 @@
     <input type='hidden' id='file_name' name='file_name' value=''/>
 </form>
 
-<div id='viewer_head'>
+<form id='download_image' method='post' action='/exportIMG/'>{% csrf_token %}
+ <input type='hidden' id='img_name' name='img_name' value=''/>
+</form>
+
+<div id='meta_info' class='ui-corner-all ui-state-highlight'>
+ <p>
+  Dataset  <a title="Go to the NCBI GEO page" href="http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dictionary.dataset_id}}" target="_blank"><strong>{{dictionary.dataset_id}}</strong></a>, disease: <strong>{{metainfo.disease}}</strong> pulblished in <strong>{{metainfo.released}}</strong>;
+  Avaliable data: <input type='image' id='viewDict' src='/media/css/img/table.png' title='Display the available data for this dataset'/>
+</p>
+</div><!--meta_info-->
+
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>1</span>
+ <p>
+  Select the platform (in case multiple platform are available). Then you have to select one probe. In order to do that you can select your favourite annotation and look up for an unique probe identifier.
+ </p>
+</div><!--helpline-->
+
+<div id='viewer_head' class='ui-corner-all ui-widget-content'>
  <div id='choose_plat' class='ui-round-all'>
   {%for p in platforms%}
    <li>
@@ -52,13 +70,28 @@
  <div id='unique_probe'>
  </div> 
 </div><!--viewer_head-->
- <div id ='viewerButtons'>
-  <input type='image' id='viewDict' src='/media/css/img/table.png' title='Display available data for dataset'/>
-  <div id='GEOview' class='ui-corner-all'>View dataset on <a href="http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc={{dictionary.dataset_id}}" target="_blank" >GEO</a></div>
-  <div id='choose_analysis' class='ui-corner-all'>
-  </div><!--choose_analysis-->
-  <button type='button' id='do_analysis' title='Get results for selected gene'>Do it</button>
- </div><!--viewerButtons-->
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>2</span>
+ <p>
+  Choose the analysis to perform and eventually change the options or parameters according to your needs. Then push the plot button in order to get the desired results.
+ </p>
+</div><!--helpline-->
+
+<div id ='viewerButtons' class='ui-corner-all ui-widget-content'>
+ <div id='choose_analysis' class='ui-corner-all'>
+  <select id='analysis_menu' class='ui-widget-content ui-corner-all'>
+  </select>
+ </div><!--choose_analysis-->
+ <button type='button' id='do_analysis' title='Get results for selected gene'>Drow plots</button>
+</div><!--viewerButtons-->
+
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>3</span>
+ <p>
+  Once the plot button have been pushed the desired graphs will be displayed below. If you need you can save the results as PNG image to your computer.
+ </p>
+</div><!--helpline-->
+
 <div id='results_viewer' class='ui-corner-all'>
 
 </div><!--results_viewer-->
