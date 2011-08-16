@@ -36,7 +36,12 @@ Dataset index
  <span class='blue_point left'>1</span> <p>Insert a keyword you are interested in or browse the table to find a dataset of your interest.</p>
 </div><!--helpline-->
 <div id='indexhead'>
- <input type='text' id='tabFilter' title='Insert a keyword to filter the list'/><button id='addFilter' onclick='add2Filter()' >Add to Filter</button>
+ <input type='text' id='tabFilter' title='Insert a keyword to filter the list'/>
+ <select id='and_or' class='ui-widget-content ui-corner-all'>
+  <option value='and'>AND</option>
+  <option value='or'>OR</option>
+ </select><!--and_or-->
+ <button id='addFilter' onclick='add2Filter()' >Add to Filter</button>
  <div id='filterContainer' class='ui-corner-all ui-widget-content'>
  </div> <!--filterContainer-->
  <form id='csv_form' method='post' action='/exportCSV/'>{% csrf_token %}

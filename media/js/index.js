@@ -50,6 +50,10 @@ function index() {
    $('#csv_form').submit();
   }
  );
+
+ $('#and_or').change(function() {
+  applyFilter(xmlindex);
+ });
 }
 
 function getXml() {
@@ -81,7 +85,29 @@ function xmlFiler(xml,filt) {
   }
  });
  //remove the redundant indexes
- tmp = _.unique(tmp);
+ tmpand = new(Array);
+
+ for (i=0; i <= tmp.length; i++) {
+  tmpval = tmp[i];
+  tmpres = $.grep(tmp,function(a,i) {
+    return a == tmpval;
+  });
+  if (tmpres.length == filt.length) {
+   tmpand.push(tmpval)
+  }
+ }
+ tmpor  = _.unique(tmp);
+ if (filt.length ==0) {
+  tmpand = _.unique(tmp);
+ } else {
+  tmpand = _.unique(tmpand);
+ };
+ if ($('#and_or').val() == 'and'){
+  tmp = tmpand;
+ } else if ($('#and_or').val() == 'or'){
+  tmp = tmpor;
+ };
+
  if (tmp.length != 0) {
   var goodXmlEl = new Array(tmp.length);
   for (i = 0; i <= (tmp.length -1); i++) {

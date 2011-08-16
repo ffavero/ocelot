@@ -53,6 +53,10 @@ def analyze(request):
          argvs = {'file' : out_file, 'data' : merged_data, 'title' : title, 'opts' :opts}
          if test == 'kmlines':
             res = kmlines(argvs)
+         if test == 'rocbees':
+            res = rocbees(argvs)
+         if test == 'groupanalysis':
+            res = grouping(argvs)
          if res == out_file:
             res = '<img src="'+ outPATH + out_file + '"/>'
             res += '<div id="image_actions">'

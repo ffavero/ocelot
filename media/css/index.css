@@ -13,6 +13,14 @@
  height:30px;
 }
 
+#and_or {
+ margin:10px;
+ margin-left:0px;
+ float:left;
+ display: block;
+ height:30px;
+}
+
 #addFilter{
  float:left;/*fix for  buggy browsers*/
  display: block;
