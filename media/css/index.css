@@ -1,3 +1,11 @@
+#indexhead{
+ margin:10;
+ float:left;/*fix for  buggy browsers*/
+ display: block;
+ width:100%;
+ padding:5px;
+}
+
 #tabFilter{
  margin:10;
  float:left;/*fix for  buggy browsers*/
@@ -36,20 +44,20 @@
  padding:5px;
 }
 
+#csv_form {
+ display:none;
+}
+
 #downloadTable {
- margin-top:30px;
- margin-left:30px;
+ float:left;
+ margin-top:0px;
+ margin-left:900px;
 }
 
 #idxTable {
- margin:10px;
+ margin:30px;
  display:block;
  float:left;
-/*
-background-color:#eee;
-border:1px solid  #666666;
-border-spacing:5px;
-border-collapse:separate;*/
 }
 
 .ui-state-default-meta { 
@@ -143,6 +151,18 @@ border-collapse:separate;*/
 .charTrigger {
  height:35px;
  width: 35px;
+ display:none;
+}
+
+.charTrigger, .gotoTrigger{
+ display:inline;
+ height:15px;
+ width:15px;
+ margin-top:10px;
+ margin-bottom:10px;
+}
+
+.alias, .saved{
  display:none;
 }
 

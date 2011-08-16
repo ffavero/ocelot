@@ -17,7 +17,8 @@ html {
  margin-top:5px;
  margin-bottom:10px;
  border-bottom:1px dashed;
- min-width:880px;
+ width:100%;
+ min-width:1300px;
 }
 
 #loading {
@@ -166,9 +167,11 @@ text-align:center;
 #contents{
  float:left;
  display:block;
- width:100%; 
- min-width:1030px; 
  min-height:520px;
+ width:100%;
+ min-width:1300px;
+ margin-left:100px;
+ margin-top:10px;
  margin-bottom:10px;
 }
 

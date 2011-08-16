@@ -30,16 +30,26 @@ Dataset index
  <a id='nav-home' class='selected' href="/">Home</a>
  {% endblock %}
 
-{% block contents %}
+{% block contents %} 
 
-<input type='text' id='tabFilter' title='Insert a keyword to filter the list'/><button id='addFilter' onclick='add2Filter()' >Add to Filter</button>
-<div id='filterContainer' class='ui-corner-all ui-widget-content'>
-</div> <!--filterContainer-->
-<form id='csv_form' method='post' action='/exportCSV/'>{% csrf_token %}
-    <input type='hidden' id='csv_download' name='csv_download' value=''/>
-    <input type='hidden' id='file_name' name='file_name' value=''/>
-</form>
-<input type='image' id='downloadTable' ></input>
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>1</span> <p>Insert a keyword you are interested in or browse the table to find a dataset of your interest.</p>
+</div><!--helpline-->
+<div id='indexhead'>
+ <input type='text' id='tabFilter' title='Insert a keyword to filter the list'/><button id='addFilter' onclick='add2Filter()' >Add to Filter</button>
+ <div id='filterContainer' class='ui-corner-all ui-widget-content'>
+ </div> <!--filterContainer-->
+ <form id='csv_form' method='post' action='/exportCSV/'>{% csrf_token %}
+  <input type='hidden' id='csv_download' name='csv_download' value=''/>
+  <input type='hidden' id='file_name' name='file_name' value=''/>
+ </form>
+</div><!--indexhead-->
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>A</span> <p>Click the analysis icon ( <img src='media/css/img/goto_analysis.png'/> ) inside the <strong>Options</strong> column to have a detailed view and option analysis for the corresponding dataset.</p>
+</div><!--helpline-->
+<div class='ui-corner-all ui-state-highlight helpline'>
+ <span class='blue_point left'>B</span><p>Optionally on the <strong>Options</strong> column is possible to display the data table of the dataset by pressing the spreadsheet icon ( <img src='media/css/img/table.png'/> ).</p> 
+</div><!--helpline-->
 <div id='idxTable'>
  <div class='tabHeader'>
   <div class='cellHead ui-corner-top ui-state-default alias'>Alias</div>
@@ -47,16 +57,18 @@ Dataset index
   <div class='cellHead ui-corner-top ui-state-default-meta'>Date</div>
   <div class='cellHead ui-corner-top ui-state-default-meta'>Source</div>
   <div class='cellHead ui-corner-top ui-state-default-meta'>Samples</div>
-  <div class='tabCellSeparator'></div>
+   <div class='tabCellSeparator'></div>
   <div class='cellHead ui-corner-top ui-state-default'>Disease</div>
   <div class='cellHead ui-corner-top ui-state-default'>Response Data</div>
   <div class='cellHead ui-corner-top ui-state-default'>Survival Data</div>
   <div class='cellHead ui-corner-top ui-state-default'>Subtype</div>
   <div class='cellHead ui-corner-top ui-state-default'>Treatment</div>  
-  <div class='cellHead ui-corner-top ui-state-default'>Inclusion Criteria</div>  
+  <div class='cellHead ui-corner-top ui-state-default'>Inclusion Criteria</div>
+   <div class='tabCellSeparator'></div>
+  <div class='cellHead ui-corner-top ui-state-default'>Actions</div>  
  </div><!--tabHeader-->
 </div><!--idxTable-->
-
- <div id='CharTab'>
- </div> <!--CharTab -->
+<div id='CharTab'>
+</div> <!--CharTab -->
+<input type='image' id='downloadTable' ></input>
 {% endblock %}

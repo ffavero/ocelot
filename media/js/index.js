@@ -1,10 +1,8 @@
 function index() {
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
-   $(window).resize(function () {
-    $(this).width($(document).width());
-    $(this).height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
  $('#loading').ajaxStop(function(){
       $(this).fadeOut();
@@ -13,7 +11,7 @@ function index() {
       $(this).fadeOut();
  });
 
- var atucompTxt = new Array;
+ var atucompTxt = new Array();
  $(xmlindex).find('object').each(function(index) {
   $(this).find('field').each(function(index) { 
    commaSplit = $(this).text().split(',');
@@ -34,16 +32,17 @@ function index() {
   text: true
  });
  applyFilter(xmlindex);
- $('#downloadTable').attr({ 'src' : '/media/css/img/csv.png' });
+ $('#downloadTable').attr({ 'src' : 'media/css/img/txt_tab.png' });
+ 
  $('#downloadTable').hover(
   function (){ 
-   $('#downloadTable').attr({ 'src' : '/media/css/img/csv_hover.png' });
+   $('#downloadTable').attr({ 'src' : 'media/css/img/txt_tab_hover.png' });
   },
   function (){
-   $('#downloadTable').attr({ 'src' : '/media/css/img/csv.png' });
+   $('#downloadTable').attr({ 'src' : 'media/css/img/txt_tab.png' });
   }
  );
- $('#downloadTable').attr({ 'title' : 'Downlad the table \nin CSV format' });
+ $('#downloadTable').attr({ 'title' : 'Downlad this table in TXT tab delimited format' })
  $('#downloadTable').click(
   function() {
    $('#csv_download').val(xml2File(xmlINmemory));
@@ -72,8 +71,10 @@ function xmlFiler(xml,filt) {
  // collect of the object matching the filter 
  $(xml).find('object').each(function(index) {
   for (i = 0; i < filt.length; i++) {
-   var matchArr = ($(this).contents().text());
-   if (matchArr.indexOf(filt[i]) > -1 ) {
+   caseInsfilt = filt[i];
+   caseInsfilt = caseInsfilt.toLowerCase();
+   var matchArr = ($(this).contents().text().toLowerCase());
+   if (matchArr.indexOf(caseInsfilt) > -1 ) {
     // Index of element to keep
     tmp.push(index);
    }
@@ -123,7 +124,7 @@ function applyFilter(xml) {
    $(this).attr({'src':'/media/css/img/geo_logo_small.png'});   
   } 
  );
-
+/*
  $('.tabRow').hover(
   function() {
    $('.charTrigger', this).css("display","inline");
@@ -131,7 +132,7 @@ function applyFilter(xml) {
   function() {
    $('.charTrigger', this).css("display","none");
   }  
- );
+ );*/
 
  $('.charTrigger').hover(
   function() {
@@ -147,6 +148,14 @@ function applyFilter(xml) {
    $(this).attr({'src':'/media/css/img/loading.gif'});
    $('.tabRow').unbind('mouseenter mouseleave');
    geoCharTable($(this).val());
+  } 
+ );
+ $('.gotoTrigger').hover(
+  function() {
+   $(this).attr({'src':'media/css/img/goto_analysis_hover.png'});
+  },
+  function() {
+   $(this).attr({'src':'media/css/img/goto_analysis.png'});   
   } 
  );
 };
@@ -221,7 +230,8 @@ function xml2div(xml) {
   xmlArr += '</div>';
   // Dataset
   xmlArr += "<div class='tabCell dataset'>";
-  xmlArr += "<a href='/"+ plugin + "/" + dataset + "' title='Look details for " + dataset + "' >" + dataset + "</a>";
+  //xmlArr += "<a href='/"+ plugin + "/" + dataset + "' title='Look details for " + dataset + "' >" + dataset + "</a>";  
+  xmlArr += "<strong>"+dataset+"</strong>";
   //xmlArr += dataset;
   //end of the cell 
   xmlArr += '</div>';
@@ -326,11 +336,21 @@ function xml2div(xml) {
   //end of the cell 
   xmlArr += '</div>';
 
+  // Separator Space
+  xmlArr += "<div class='tabCellSeparator'></div>"; 
+
   //last cell with Char table option
-  xmlArr += "<div class='tabCellChar'><input type='image' class='charTrigger' src='/media/css/img/table.png'/ title='Display Char table for dataset "+ dataset +"' value='"+ dataset +"'/></div>";
-  
+  xmlArr += "<div class='tabCellChar'>";
+  xmlArr += " <div class='subCell taskTab'>";
+  localin = '/' + plugin + '/' +dataset + '/';
+  xmlArr += "  <input type='image' class='gotoTrigger' src='media/css/img/goto_analysis.png' title='View and analyze "+dataset+" dataset' onClick='window.location.href=\""+localin+"\"'/>";
+  xmlArr += " </div>";
+  xmlArr += " <div class='subCell taskTab'>";
+  xmlArr += "  <input type='image' class='charTrigger' src='media/css/img/table.png' title='Display Char table for dataset "+ dataset +"' value='"+ dataset +"'/>";
+  xmlArr += " </div>";
+  xmlArr += "</div>";
   //end of the row 
-  xmlArr += '</div>';
+  xmlArr += '</div>';;
  });
  return(xmlArr);
 }
@@ -409,7 +429,7 @@ function geoCharTableShowUp(xml,ds) {
     Close: function() {
          $( this ).dialog( 'close' );
       },
-   'Downlad as CSV': function() {
+   'Downlad as TXT': function() {
      var tmpCsv = '';
      $('#char_table').find('.tab_row').each(function(){
       $(this).find('div').each(function(){
