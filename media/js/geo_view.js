@@ -711,6 +711,7 @@ function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
    //$('#results_viewer').find('img').remove();
    $('#results_viewer').append(res);
    $('#results_viewer').fadeIn('slow');
+   $(document).scrollTop($(document).height());
   },
   error: function() {
    alert ("Sorry we could't analyze the data!");
