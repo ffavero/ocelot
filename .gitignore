@@ -3,3 +3,4 @@ data/gsms/*
 data/expressions/*
 data/annotations/*
 *.sqlite
+.DS_Store
