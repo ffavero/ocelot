@@ -234,7 +234,7 @@ border-collapse:separate;*/
  display:block;
  width:120px;
  height:45px;
- overflow:auto;
+ overflow:hidden;
  border:1px dotted;
  margin:1px;
  font-size:12px;
@@ -526,3 +526,15 @@ border-collapse:separate;*/
  font-size:9px;
  text-align:center;
 }
+
+#selctorTable {
+ display:none;
+}
+
+#group_table {
+ margin:10px;
+ display:block;
+ float:left;
+ width:100%;
+}
+

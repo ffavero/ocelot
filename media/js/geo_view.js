@@ -164,7 +164,8 @@ function view(dataset) {
   dataType:'xml',
   async:true,
   success: function(xml) {
-   dictDivTable = geodicttab(xml,dictTags);
+   gsmsXML = xml;
+   dictDivTable = geodicttab(gsmsXML,dictTags);
    $('#dict_table').append(dictDivTable);
   },
   error: function() {
@@ -359,11 +360,77 @@ function GroupsAnalysis(dataset) {
  //populate the analysis menu once a gene/probe
  // have been selected
  prepareAnalysis = function()  {
+  $('#sel_group').click(function(){
+   tmpTab = selectorchartab(gsmsXML); 
+   if ($('#group_table_main').exists()) { 
+    $('#group_table_main').remove();
+   }
+   $('#group_table').append(tmpTab);
+   clumnClass = '';
+   chosenCol  = '';
+   groupText  = '';
+   $('.selectColumn').hover(
+    function(){
+     // find the column class
+     classes = $(this).attr('class');
+     classes = classes.split(' ');
+     $(classes).each(function(x) {
+      if (classes[x].indexOf('col') === 0) {
+       clumnClass = classes[x];
+      }
+     });
+     $('.'+clumnClass).addClass('ui-state-hover');
+    },
+    function(){
+     $('.'+clumnClass).removeClass('ui-state-hover');
+     }
+   );
+   $('.selectColumn').click(function(x) {
+    if (chosenCol != '') {
+     $('.'+chosenCol).removeClass('ui-state-active');
+    }
+    groupText = $(this).text();
+    classes = $(this).attr('class');
+    classes = classes.split(' ');
+    $(classes).each(function(x) {
+     if (classes[x].indexOf('col') === 0) {
+      chosenCol = classes[x];
+     }
+    });
+    $('.'+chosenCol).addClass('ui-state-active');
+   });
+   columncount = 0;
+   $('#group_table').find('.cellTitle').each(function(){
+    columncount = columncount + 1;
+   });
+   $('#group_table').css({'width': 20 + (columncount*125) })
+   $('#selctorTable').dialog({
+    title: 'Select the column to grab the groups from',
+    width: 800,
+    height:400,
+    resizable:true,
+    modal:false,
+    buttons: {
+     Close: function() {
+      $( this ).dialog( 'close' );
+     },
+     'Grab the selected column'   : function() {
+      if (groupText != '') {
+       dataJSON = divTabtoJSON ('dict_table',[groupText],false);
+       alert(dataJSON);
+      } else {
+       alert ('No culumn selected, please select a clumn first');
+      }
+     }
+    }
+   });
+  });
  }
 
  GroupingSnippet ='<div id="analysis_snippet"> ' +
                    '<div id="Grouping"> ' +
                     '<div id="field_selector">'+
+                    '<input type="image" id="sel_group" src="/media/css/img/table.png" title="Select the column containing the groups to split the experiments"/>'
                     '</div>'+
                     '<div id="show_opts" class="ui-corner-all ui-widget-content"><b>Groups</b>' +
                     '</div>'+
@@ -372,6 +439,14 @@ function GroupsAnalysis(dataset) {
  // Append the kmlines snippet (silently) 
  // in the right place and enable the functionality... 
  $(GroupingSnippet).appendTo('#choose_analysis').hide();
+  $('#sel_group').hover(
+  function() {
+   $(this).attr({'src':'/media/css/img/tablehover.png'});
+  },
+  function() {
+   $(this).attr({'src':'/media/css/img/table.png'});   
+  } 
+ );
  prepareAnalysis();
  $('#do_analysis').click(function() {
 
@@ -634,16 +709,16 @@ function geodicttab(xml,dicttags) {
  return dictTable;
 }
 
-function dictTabtoJSON (fields) {
+function divTabtoJSON (divid,fields,abbreviation) {
 // Collect all the select field in the
 // fields Array from the table and
 // put it in a dictionary-like object
  results = new Object();
  paths = [];
- $('#dict_table').find('.cellTitle').each( function(){
+ $('#'+divid).find('.cellTitle').each( function(){
   paths.push($(this).text());
  });
- $('#dict_table').find('.tab_row').each(function(){
+ $('#'+divid).find('.tab_row').each(function(){
   sampleID = '';
   $(this).find('.cell').each(function(index){
       if (index == 0) {
@@ -655,8 +730,13 @@ function dictTabtoJSON (fields) {
         tmptxt = $(this).text().replace(/\n/g,'');
         tmptxt = tmptxt.replace(/\s/g,'');
         tmptxt = tmptxt.replace(/\t/g,'');
-        results[sampleID][paths[index].substring(0,4)] = new Object();
-        results[sampleID][paths[index].substring(0,4)] = tmptxt;
+        if (abbreviation == true){
+         results[sampleID][paths[index].substring(0,4)] = new Object();
+         results[sampleID][paths[index].substring(0,4)] = tmptxt;
+        } else {
+         results[sampleID][paths[index]] = new Object();
+         results[sampleID][paths[index]] = tmptxt;
+        }
        }
       }  
   });
@@ -681,7 +761,7 @@ function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
    filename = dataset+'-'+$(selPlatform).text().replace(/\s/g,'');
  }
 
- dataJSON = dictTabtoJSON (fields);
+ dataJSON = divTabtoJSON ('dict_table',fields,true);
  //Now we can submit the data to the server
  // with an AJAX call (and see the results on the same page):
 
@@ -729,4 +809,54 @@ function downloadIMG(imgName) {
  $('#img_name').val(imgName);
  $('#download_image').submit();
 }
+
+function selectorchartab(xml) {
+ //Make a table analogue to the one in the index page
+ //But with the availability to select a specific column
+ var charheader = ['GSM'];
+ $(xml).find('Characteristics').each(function(){
+   charheader.push($(this).attr('tag'));
+ });
+ //remove all the duplicate in order to have unique headers identifiers
+ charheader = _.uniq(charheader)
+ //Start create the div table
+ charTable = "<div id='group_table_main'>";
+ charTable += "<div class='tab_row'>";
+ $(charheader).each(function(x) {
+  if (charheader[x] != 'GSM') {
+   charTable += "<div class='cellTitle selectColumn col"+x+"' title='" + charheader[x] + "'>" + charheader[x] + "</div>";
+  } else {
+    charTable += "<div class='cellTitle' title='" + charheader[x] + "'>" + charheader[x] + "</div>";
+  }
+ });
+ charTable += "</div>";
+ //Done table header
+ //We can parse again the xml and start to populate the table
+
+ $(xml).find('Sample').each(function(){
+  charTable += "<div class='tab_row'>";
+   charTable += "<div class='cell'>" + $(this).attr('iid')+ "</div>";
+   var tmptext = [];
+   var tmpattr = []; 
+   $(this).find('Characteristics').each(function(){
+    tmptext.push($(this).text());
+    tmpattr.push($(this).attr('tag'));
+   });
+   $(charheader).each(function(x) {
+    if (charheader[x] != 'GSM') {
+      idx = jQuery.inArray(charheader[x], tmpattr);
+     if (idx >= 0 ) {
+      charTable += "<div class='cell col"+x+"' title='" + tmptext[idx] + "'>" + tmptext[idx] + "</div>";
+     } else {
+      charTable += "<div class='cell col"+x+"'></div>";
+     }
+    }
+   });
+  charTable += "</div>";
+ });  
+ charTable += "</div>";
+ return charTable;
+}
+
+
 
