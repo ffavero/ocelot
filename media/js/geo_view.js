@@ -110,8 +110,6 @@ function view(dataset) {
    text('Response/non-response ROC curves and scatterplots'));
   $('#analysis_menu').val('rocbees')
  };
- setAnalysisField($('#analysis_menu').val(),dataset);
-
  // style the hover action on the table button
  // and give him a proper onClick function
  $('#viewDict').hover(
@@ -164,9 +162,11 @@ function view(dataset) {
   dataType:'xml',
   async:true,
   success: function(xml) {
-   gsmsXML = xml;
-   dictDivTable = geodicttab(gsmsXML,dictTags);
+   dictDivTable    = geodicttab(xml,dictTags);
+   selectDivTab    = selectorchartab(xml); 
+   $('#group_table').append(selectDivTab);
    $('#dict_table').append(dictDivTable);
+   setAnalysisField($('#analysis_menu').val(),dataset);
   },
   error: function() {
    $('#loading').hide();
@@ -360,86 +360,24 @@ function GroupsAnalysis(dataset) {
  //populate the analysis menu once a gene/probe
  // have been selected
  prepareAnalysis = function()  {
-  $('#sel_group').click(function(){
-   tmpTab = selectorchartab(gsmsXML); 
-   if ($('#group_table_main').exists()) { 
-    $('#group_table_main').remove();
-   }
-   $('#group_table').append(tmpTab);
-   clumnClass = '';
-   chosenCol  = '';
-   groupText  = '';
-   $('.selectColumn').hover(
-    function(){
-     // find the column class
-     classes = $(this).attr('class');
-     classes = classes.split(' ');
-     $(classes).each(function(x) {
-      if (classes[x].indexOf('col') === 0) {
-       clumnClass = classes[x];
-      }
-     });
-     $('.'+clumnClass).addClass('ui-state-hover');
-    },
-    function(){
-     $('.'+clumnClass).removeClass('ui-state-hover');
-     }
-   );
-   $('.selectColumn').click(function(x) {
-    if (chosenCol != '') {
-     $('.'+chosenCol).removeClass('ui-state-active');
-    }
-    groupText = $(this).text();
-    classes = $(this).attr('class');
-    classes = classes.split(' ');
-    $(classes).each(function(x) {
-     if (classes[x].indexOf('col') === 0) {
-      chosenCol = classes[x];
-     }
-    });
-    $('.'+chosenCol).addClass('ui-state-active');
-   });
-   columncount = 0;
-   $('#group_table').find('.cellTitle').each(function(){
-    columncount = columncount + 1;
-   });
-   $('#group_table').css({'width': 20 + (columncount*125) })
-   $('#selctorTable').dialog({
-    title: 'Select the column to grab the groups from',
-    width: 800,
-    height:400,
-    resizable:true,
-    modal:false,
-    buttons: {
-     Close: function() {
-      $( this ).dialog( 'close' );
-     },
-     'Grab the selected column'   : function() {
-      if (groupText != '') {
-       dataJSON = divTabtoJSON ('dict_table',[groupText],false);
-       alert(dataJSON);
-      } else {
-       alert ('No culumn selected, please select a clumn first');
-      }
-     }
-    }
-   });
-  });
+   //just take the first column after GSM (to not leave it blank)
+   groupText = $('#group_table').find('.cellTitle').eq(1).text();
+   handleGroupdata(groupText);
  }
 
  GroupingSnippet ='<div id="analysis_snippet"> ' +
-                   '<div id="Grouping"> ' +
+                   '<div id="Grouping">' +
                     '<div id="field_selector">'+
-                    '<input type="image" id="sel_group" src="/media/css/img/table.png" title="Select the column containing the groups to split the experiments"/>'
-                    '</div>'+
-                    '<div id="show_opts" class="ui-corner-all ui-widget-content"><b>Groups</b>' +
-                    '</div>'+
-                   '</div><!--Grouping-->'+
+                    '<input type="image" id="sel_group" src="/media/css/img/table.png" title="Select the column containing the groups to split the experiments"/>' +
+                    '</div>' +
+                    '<div id="show_opts" class="ui-corner-all ui-widget-content">' +
+                    '</div>' +
+                   '</div><!--Grouping-->' +
                   '</div><!--analysis_snippet-->'
  // Append the kmlines snippet (silently) 
  // in the right place and enable the functionality... 
  $(GroupingSnippet).appendTo('#choose_analysis').hide();
-  $('#sel_group').hover(
+ $('#sel_group').hover(
   function() {
    $(this).attr({'src':'/media/css/img/tablehover.png'});
   },
@@ -448,6 +386,67 @@ function GroupsAnalysis(dataset) {
   } 
  );
  prepareAnalysis();
+
+ $('#sel_group').click(function(){
+  clumnClass = '';
+  chosenCol  = '';
+  groupText  = '';
+  $('.selectColumn').hover(
+   function(){
+    // find the column class
+    classes = $(this).attr('class');
+    classes = classes.split(' ');
+    $(classes).each(function(x) {
+     if (classes[x].indexOf('col') === 0) {
+      clumnClass = classes[x];
+     }
+    });
+    $('.'+clumnClass).addClass('ui-state-hover');
+    },
+   function(){
+    $('.'+clumnClass).removeClass('ui-state-hover');
+   }
+  );
+  $('.selectColumn').click(function(x) {
+   if (chosenCol != '') {
+    $('.'+chosenCol).removeClass('ui-state-active');
+   }
+   groupText = $(this).text();
+   classes   = $(this).attr('class');
+   classes   = classes.split(' ');
+   $(classes).each(function(x) {
+    if (classes[x].indexOf('col') === 0) {
+     chosenCol = classes[x];
+    }
+   });
+   $('.'+chosenCol).addClass('ui-state-active');
+  });
+  columncount = 0;
+  $('#group_table').find('.cellTitle').each(function(){
+   columncount = columncount + 1;
+  });
+  $('#group_table').css({'width': 20 + (columncount*125) })
+  $('#selctorTable').dialog({
+   title: 'Select the column to grab the groups from',
+   width: 800,
+   height:400,
+   resizable:true,
+   modal:false,
+   buttons: {
+    Close: function() {
+     $( this ).dialog( 'close' );
+    },
+    'Grab the selected column'   : function() {
+     if (groupText != '') {
+      handleGroupdata(groupText);
+     } else {
+      alert ('No culumn selected, please select a clumn first');
+     }
+    }
+   }
+  });
+ });
+
  $('#do_analysis').click(function() {
 
  });
@@ -728,8 +727,7 @@ function divTabtoJSON (divid,fields,abbreviation) {
        if ($.inArray(paths[index], fields) >= 0) {
         // Clean a bit the text from spaces tabs...
         tmptxt = $(this).text().replace(/\n/g,'');
-        tmptxt = tmptxt.replace(/\s/g,'');
-        tmptxt = tmptxt.replace(/\t/g,'');
+        tmptxt = $.trim(tmptxt);
         if (abbreviation == true){
          results[sampleID][paths[index].substring(0,4)] = new Object();
          results[sampleID][paths[index].substring(0,4)] = tmptxt;
@@ -743,7 +741,7 @@ function divTabtoJSON (divid,fields,abbreviation) {
  });
 // Return the Object in JSON, ready to be sended
 // to the server.
- return JSON.stringify(results);
+ return results;
 }
 
 function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
@@ -761,7 +759,8 @@ function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
    filename = dataset+'-'+$(selPlatform).text().replace(/\s/g,'');
  }
 
- dataJSON = divTabtoJSON ('dict_table',fields,true);
+ dataJSON = divTabtoJSON('dict_table',fields,true);
+ dataJSON = JSON.stringify(dataJSON);
  //Now we can submit the data to the server
  // with an AJAX call (and see the results on the same page):
 
@@ -859,4 +858,53 @@ function selectorchartab(xml) {
 }
 
 
+function handleGroupdata(groupText) {
+ dataJSON = divTabtoJSON ('group_table',[groupText],false);
+ // check if there are more then 4 groups, 
+ // if is a numeric or literallist
+ listOfvalues = []
+ $.each(dataJSON, function(sample,values) {
+  $.each(values, function(title,value) {
+   listOfvalues.push(value);
+  });
+ });
+ listOfvalues = _.uniq(listOfvalues);
+ if (listOfvalues.length >= 4) {
+ //Chech if is numeric
+  arenumbers = [];
+  $(listOfvalues).each(function(index){
+   if (isAnumber(listOfvalues[index])) {
+    arenumbers.push(listOfvalues[index]);
+   }
+  });
+  // R will transform chars in numbers, but I just check if 
+  // at least the half of the vector is really numbers
+  if (arenumbers.length >= listOfvalues.length/2) {
+   //is big and Numeric.. a scatterplot might be a good start
+   alert('bignum');
+  } else {
+   //is big and Charachters... boxplot
+   alert('bigch');
+  }
+ } else {
+  //Chech if is numeric
+  arenumbers = [];
+  $(listOfvalues).each(function(index){
+   if (isAnumber(listOfvalues[index])) {
+    arenumbers.push(listOfvalues[index]);
+   }
+  });
+  if (arenumbers.length >= listOfvalues.length/2) {
+   //is small and Numeric... mostly useless
+   alert('smalnu');
+  } else {
+   //is small and Charachters. Can do something like beeswarm
+   alert('smalch');
+  }
+ };
+}
+
+function isAnumber(n) {
+ return !isNaN(parseFloat(n)) && isFinite(n);
+}
 

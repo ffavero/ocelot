@@ -76,12 +76,15 @@ function xmlFiler(xml,filt) {
  $(xml).find('object').each(function(index) {
   for (i = 0; i < filt.length; i++) {
    caseInsfilt = filt[i];
-   caseInsfilt = caseInsfilt.toLowerCase();
-   var matchArr = ($(this).contents().text().toLowerCase());
-   if (matchArr.indexOf(caseInsfilt) > -1 ) {
-    // Index of element to keep
-    tmp.push(index);
-   }
+   caseInsfilt = $.trim(caseInsfilt.toLowerCase());
+  // var matchArr = ($(this).contents().text().toLowerCase());
+   matchArr = [];
+   $(this).find('field').each(function(idx){
+    field = $.trim($(this).text().toLowerCase());
+    if (field.indexOf(caseInsfilt) != -1) {
+     tmp.push(index);
+    }
+   });
   }
  });
  //remove the redundant indexes
