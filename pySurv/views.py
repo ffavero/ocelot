@@ -21,9 +21,9 @@ def analyze(request):
       json_data = simplejson.loads(data['data_json'])
       test      = data['test']
       format    = data['format']
-      title    = data['title']
-      opts     = data['opts']
-      toggle   = data['toggle']
+      title     = data['title']
+      opts      = data['opts']
+      toggle    = data['toggle']
       outPATH   = '/media/tmp/'
       expr_PATH = '/data/expressions/'
       out_file  = test + '_' + toggle +'_' + opts.replace(':','').replace('.','').replace(' ','').strip() + '_' + data['file_code'] + '_' + id_ref + '.' + format;
@@ -56,7 +56,7 @@ def analyze(request):
          if test == 'rocbees':
             res = rocbees(argvs)
          if test == 'groupanalysis':
-            res = grouping(argvs)
+            res = groupanalysis(argvs)
          if res == out_file:
             res = '<img src="'+ outPATH + out_file + '"/>'
             res += '<div id="image_actions">'
@@ -131,6 +131,7 @@ def kmlines(ARGVS):
       return filename
    except:
       return 'Error'
+
 def rocbees(ARGVS):
    '''
    ROC curves and the beeswarm plot 
@@ -188,6 +189,89 @@ def rocbees(ARGVS):
    ''')
    try:
       robjects.r['plotResps'](filename = filewrite, expr = expr, resp = resp, category = category, main = title)
+      return filename
+   except:
+      return 'Error'
+
+def groupanalysis(ARGVS):
+   '''
+   Grouping analysis, makes beeswarm,
+   ROC curves, boxplot and scatterplots. 
+   '''
+   beeswarm = importr('beeswarm')
+   Cairo = importr('Cairo')
+   ROC   = importr('ROC')
+   filename = ARGVS['file']
+   data     = ARGVS['data']
+   title    = ARGVS['title']
+   opts     = ARGVS['opts']
+   filewrite = ROOT_PATH + '/media/tmp/' + filename 
+   cats    = []
+   expr    = []
+   names = data.keys()
+   print ARGVS
+   for name in names:
+      cats.append(data[name]['data'])
+      expr.append(data[name]['expression'])
+   robjects.r ('''
+    approx3 <- function(x, y = NULL, theta = 0.001) {
+     xy <- xy.coords(x, y)
+     dx <- diff(xy$x)/(max(xy$x) - min(xy$x))
+     dy <- diff(xy$y)/(max(xy$y) - min(xy$y))
+     angle <- atan2(dy, dx)
+     diff.angle <- diff(angle)%%pi
+     abs.diff.angle <- pmin(diff.angle, pi - diff.angle)
+     keep <- c(TRUE, abs.diff.angle > theta, TRUE)
+     xy$x <- xy$x[keep]
+     xy$y <- xy$y[keep]
+     xy
+    }
+    aronroc <- function(x, truth, type = "l", xlab = expression(1 -
+     specificity), ylab = "Sensitivity", ...) {
+     require(ROC)
+     r <- rocdemo.sca(truth, x)
+     xy <- list(x = 1 - r@spec, y = r@sens)
+     xy.trimmed <- approx3(xy)
+     plot(xy.trimmed, type = type, xlab = xlab, ylab = ylab, ...)
+     invisible(xy.trimmed)
+    }
+    plotRoc <- function (filename,expr,data,category, main='') {
+     expr  = as.numeric(expr)
+     data  = as.character(data)
+     CairoPNG(filename=filename,width = 800, height = 400)
+     par(oma = c(0,0,1,0))
+     layout(matrix(1:2, nrow = 1), widths = c(1,1))
+     beeswarm(expr ~ data,col=c(1:length(unique(data))),
+      pch=16,xlab='Categories', ylab='Expression')
+     par(xpd = NA)
+     aronroc (expr, data == category)
+     title(main,outer=TRUE)
+     dev.off()
+    }
+    plotPoints <- function(filename,expr,data, main='') {
+     expr  = as.numeric(expr)
+     data  = as.character(data)
+     CairoPNG(filename=filename,width = 800, height = 400)
+     plot(x=data,y=expr)
+     title(main)
+     dev.off()
+    }
+    plotBoxes <- function(filename,expr,data, main='') {
+     expr  = as.numeric(expr)
+     data  = as.character(data)
+     CairoPNG(filename=filename,width = 800, height = 400)
+     boxplot(expr ~ data)
+     title(main)
+     dev.off()
+    }
+   ''')
+   try:
+      if opts == 'scatterplot':
+         robjects.r['plotPoints'](filename = filewrite, expr = expr, data = cats, main = title)
+      elif opts == 'boxplot':
+         robjects.r['plotBoxes'](filename = filewrite, expr = expr, data = cats, main = title)
+      else:
+         robjects.r['plotRoc'](filename = filewrite, expr = expr, data = cats, category = opts, main = title)
       return filename
    except:
       return 'Error'

@@ -539,3 +539,9 @@ border-collapse:separate;*/
  width:100%;
 }
 
+#group_handler {
+ float:left;
+ display:block;
+ text-align:left;
+}
+

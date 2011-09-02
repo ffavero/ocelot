@@ -33,11 +33,12 @@ Dataset index
 {% block contents %} 
 
 <div class='ui-corner-all ui-state-highlight helpline'>
- <span class='blue_point left'>1</span> <p>Insert a keyword you are interested in or browse the table to find a dataset of your interest.</p>
+ <span class='blue_point left'>1</span> <p> Locate a data set: Browse the table below, or enter terms here to filter the table.</p>
 </div><!--helpline-->
 <div id='indexhead'>
  <input type='text' id='tabFilter' title='Insert a keyword to filter the list'/>
- <select id='and_or' class='ui-widget-content ui-corner-all'>
+ <!-- Set display none so the select is not visible and defaults remains AND-->
+ <select id='and_or' class='ui-widget-content ui-corner-all' style='display:none'>
   <option value='and'>AND</option>
   <option value='or'>OR</option>
  </select><!--and_or-->
@@ -49,11 +50,8 @@ Dataset index
   <input type='hidden' id='file_name' name='file_name' value=''/>
  </form>
 </div><!--indexhead-->
-<div class='ui-corner-all ui-state-highlight helpline'>
- <span class='blue_point left'>A</span> <p>Click the analysis icon ( <img src='media/css/img/goto_analysis.png'/> ) inside the <strong>Options</strong> column to have a detailed view and option analysis for the corresponding dataset.</p>
-</div><!--helpline-->
-<div class='ui-corner-all ui-state-highlight helpline'>
- <span class='blue_point left'>B</span><p>Optionally on the <strong>Options</strong> column is possible to display the data table of the dataset by pressing the spreadsheet icon ( <img src='media/css/img/table.png'/> ).</p> 
+<div class='ui-corner-all ui-state-highlight longer helpline '>
+ <span class='blue_point left'>2</span> <p>Analyze a data set by clicking on the analysis icon ( <img src='media/css/img/goto_analysis.png'/> ). Or, view the clinical data table by clicking on the spreadsheet icon ( <img src='media/css/img/table.png'/> )</p>
 </div><!--helpline-->
 <div id='idxTable'>
  <div class='tabHeader'>

@@ -271,7 +271,7 @@ function kmlineActions(dataset) {
    $( '#slider_val' ).text( ui.value );
   }   
  });
-
+ $('#do_analysis').unbind('click');
  $('#do_analysis').click(function() {
   idRef =  $('#selected_id').text().replace(/\n/g,'');
   idRef =  idRef.replace(/\"/g,'');
@@ -284,7 +284,7 @@ function kmlineActions(dataset) {
   }
   title += ' survival: '+dataset +' probe: ';
   title += $('#selected_id').text();
-  doItbutton(dataset,idRef,"kmlines",fields,title,$('#slider_val').text(),fields[0].substring(5));
+  doItbutton(dataset,idRef,"kmlines","dict_table",fields,true,title,$('#slider_val').text(),fields[0].substring(5));
  });
 }
 
@@ -332,7 +332,7 @@ function ROCbeeswarm(dataset) {
                    ' <div id="ROC_infos">Chose a response category:'+
                    '  <select id="roc_info" class="ui-widget-content ui-corner-all">' +
                    '  </select>' +
-                   '  </div>'+
+//                   '  </div>'+
                    ' </div>'+
                    '</div>'+
                   '</div><!--ROCbees-->'+
@@ -342,6 +342,7 @@ function ROCbeeswarm(dataset) {
  fields = ['response'];
  $(ROCbeesSnippet).appendTo('#choose_analysis').hide();
  prepareAnalysis();
+ $('#do_analysis').unbind('click');
  $('#do_analysis').click(function() {
   idRef =  $('#selected_id').text().replace(/\n/g,'');
   idRef =  idRef.replace(/\"/g,'');
@@ -350,7 +351,7 @@ function ROCbeeswarm(dataset) {
   title  = ' Response: '+dataset +' for category '+choiceResp+'; probe: ';
   title += $('#selected_id').text();
   toggleResp = choiceResp.replace(/\s/g,'');
-  doItbutton(dataset,idRef,"rocbees",fields,title,choiceResp,toggleResp);
+  doItbutton(dataset,idRef,"rocbees","dict_table",fields,true,title,choiceResp,toggleResp);
  });
 }
 
@@ -360,9 +361,21 @@ function GroupsAnalysis(dataset) {
  //populate the analysis menu once a gene/probe
  // have been selected
  prepareAnalysis = function()  {
+   $('#group_table').find('.cellTitle').each(function(){
+    if ($(this).attr('class').indexOf('ui-state-active') > -1) {
+     classes = $(this).attr('class');
+     classes = classes.split(' ');
+     $(classes).each(function(x) {
+      if (classes[x].indexOf('col') === 0) {
+       $('.'+classes[x]).removeClass('ui-state-active');
+      }
+     });
+    }
+   });
    //just take the first column after GSM (to not leave it blank)
    groupText = $('#group_table').find('.cellTitle').eq(1).text();
-   handleGroupdata(groupText);
+   chosenCol = 'col1';
+   handleGroupdata('group_table',groupText);
  }
 
  GroupingSnippet ='<div id="analysis_snippet"> ' +
@@ -384,13 +397,12 @@ function GroupsAnalysis(dataset) {
   function() {
    $(this).attr({'src':'/media/css/img/table.png'});   
   } 
- );
+ ); 
+ chosenCol  = '';
+  groupText  = '';
  prepareAnalysis();
-
  $('#sel_group').click(function(){
   clumnClass = '';
-  chosenCol  = '';
-  groupText  = '';
   $('.selectColumn').hover(
    function(){
     // find the column class
@@ -408,18 +420,9 @@ function GroupsAnalysis(dataset) {
    }
   );
   $('.selectColumn').click(function(x) {
-   $('#group_table').find('.cellTitle').each(function(){
-    if ($(this).attr('class').indexOf('ui-state-active') > -1) {
-     classes = $(this).attr('class');
-     classes = classes.split(' ');
-     $(classes).each(function(x) {
-      if (classes[x].indexOf('col') === 0) {
-       $('.'+classes[x]).removeClass('ui-state-active');
-      }
-     });
-    }
-   });
-
+   if (chosenCol  != '') {
+    $('.'+chosenCol).removeClass('ui-state-active');
+   };
    groupText = $(this).text();
    classes   = $(this).attr('class');
    classes   = classes.split(' ');
@@ -429,6 +432,7 @@ function GroupsAnalysis(dataset) {
     }
    });
    $('.'+chosenCol).addClass('ui-state-active');
+   handleGroupdata('group_table',groupText);
   });
   columncount = 0;
   $('#group_table').find('.cellTitle').each(function(){
@@ -445,19 +449,36 @@ function GroupsAnalysis(dataset) {
     Close: function() {
      $( this ).dialog( 'close' );
     },
-    'Grab the selected column'   : function() {
+  /*  'Grab the selected column'   : function() {
      if (groupText != '') {
-      handleGroupdata(groupText);
+      handleGroupdata('group_table',groupText);
      } else {
       alert ('No culumn selected, please select a clumn first');
      }
-    }
+    }*/
    }
   });
  });
-
+ $('#do_analysis').unbind('click');
  $('#do_analysis').click(function() {
+  idRef =  $('#selected_id').text().replace(/\n/g,'');
+  idRef =  idRef.replace(/\"/g,'');
+  idRef =  idRef.replace(/ /g,'');
+  // Something setted by handleGroupdata function
 
+  title  = ' '+dataset +' '+chosenCol+'; probe: ';
+  title += $('#selected_id').text();
+  groupOpts = '';
+  toggleOpts = '';
+  if ($('#roc_info').exists()) {
+   groupOpts = $('#roc_info').val() ;
+   toggleOpts = groupOpts;
+  } else {
+   groupOpts = $.trim($('#group_plot_type').text());
+   toggleOpts = $.trim(groupText.replace(/ /g,''));
+   toggleOpts = $.trim(groupText.replace(/\W/g,''));
+  };
+  doItbutton(dataset,idRef,'groupanalysis','group_table',[groupText],false,title,groupOpts,toggleOpts);
  });
 }
 
@@ -717,7 +738,7 @@ function geodicttab(xml,dicttags) {
  return dictTable;
 }
 
-function divTabtoJSON (divid,fields,abbreviation) {
+function divTabtoJSON (divid,fields,keepname) {
 // Collect all the select field in the
 // fields Array from the table and
 // put it in a dictionary-like object
@@ -737,12 +758,12 @@ function divTabtoJSON (divid,fields,abbreviation) {
         // Clean a bit the text from spaces tabs...
         tmptxt = $(this).text().replace(/\n/g,'');
         tmptxt = $.trim(tmptxt);
-        if (abbreviation == true){
+        if ( keepname == true ){
          results[sampleID][paths[index].substring(0,4)] = new Object();
          results[sampleID][paths[index].substring(0,4)] = tmptxt;
         } else {
-         results[sampleID][paths[index]] = new Object();
-         results[sampleID][paths[index]] = tmptxt;
+         results[sampleID]['data'] = new Object();
+         results[sampleID]['data'] = tmptxt;
         }
        }
       }  
@@ -753,7 +774,7 @@ function divTabtoJSON (divid,fields,abbreviation) {
  return results;
 }
 
-function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
+function doItbutton (dataset,idRef,analysis,dataTab,fields,keepname,title,options,toggle) {
  $('#results_viewer').fadeIn('slow');
  // collect the 3 info (filename, probe name and
  // selected clinical data) to pass to theserver
@@ -768,7 +789,7 @@ function doItbutton (dataset,idRef,analysis,fields,title,options,toggle) {
    filename = dataset+'-'+$(selPlatform).text().replace(/\s/g,'');
  }
 
- dataJSON = divTabtoJSON('dict_table',fields,true);
+ dataJSON = divTabtoJSON(dataTab,fields,keepname);
  dataJSON = JSON.stringify(dataJSON);
  //Now we can submit the data to the server
  // with an AJAX call (and see the results on the same page):
@@ -867,8 +888,9 @@ function selectorchartab(xml) {
 }
 
 
-function handleGroupdata(groupText) {
- dataJSON = divTabtoJSON ('group_table',[groupText],false);
+function handleGroupdata(dataTab,groupText) {
+ $('#group_handler').fadeOut('slow').remove();
+ dataJSON = divTabtoJSON (dataTab,[groupText],false);
  // check if there are more then 4 groups, 
  // if is a numeric or literallist
  listOfvalues = []
@@ -890,10 +912,22 @@ function handleGroupdata(groupText) {
   // at least the half of the vector is really numbers
   if (arenumbers.length >= listOfvalues.length/2) {
    //is big and Numeric.. a scatterplot might be a good start
-   alert('bignum');
+   groupHandlerDiv = '<div id="group_handler">' +
+                     ' Group by ' + groupText +'<br>' +
+                     ' <i>' + arenumbers.length + ' numeric items </i><br>' +
+                     ' <i>Resulting plot</i>:<br>'+
+                     ' <dd><div id="group_plot_type">scatterplot</div>' +
+                     ' expression/' + groupText +
+                     '</dd></div>';
   } else {
-   //is big and Charachters... boxplot
-   alert('bigch');
+   //is big and Charachters... boxplots?
+   groupHandlerDiv = '<div id="group_handler">' +
+                     ' Group by ' + groupText +'<br>' +
+                     ' <i>' + listOfvalues.length + ' items </i><br>' +
+                     ' <i>Resulting plot</i>:<br>'+
+                     ' <dd><div id="group_plot_type">boxplot</div>' +
+                     ' expression/' + groupText +
+                     '</dd></div>';
   }
  } else {
   //Chech if is numeric
@@ -905,12 +939,27 @@ function handleGroupdata(groupText) {
   });
   if (arenumbers.length >= listOfvalues.length/2) {
    //is small and Numeric... mostly useless
-   alert('smalnu');
+   groupHandlerDiv = '<div id="group_handler">' +
+                       'smalnu' +
+                     '</div>';
   } else {
    //is small and Charachters. Can do something like beeswarm
-   alert('smalch');
+   ROCopts = '';
+   $(listOfvalues).each(function(index){
+    ROCopts += '<option value="' + listOfvalues[index] +'">' +
+               listOfvalues[index] +'</option>';   
+   });
+   groupHandlerDiv = '<div id="group_handler">' +
+                      ' Group by ' + groupText +'<br>' +
+                      ' <div id="ROC_infos">Category for the ROC curve:'+
+                      '  <select id="roc_info" class="ui-widget-content ui-corner-all">' +
+                         ROCopts +
+                      '  </select>' +
+                      ' </div>'+
+                     '</div>';
   }
  };
+ $(groupHandlerDiv).appendTo('#show_opts').hide().fadeIn('slow');
 }
 
 function isAnumber(n) {
