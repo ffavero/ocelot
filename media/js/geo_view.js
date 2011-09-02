@@ -408,10 +408,18 @@ function GroupsAnalysis(dataset) {
    }
   );
   $('.selectColumn').click(function(x) {
-   alert(chosenCol);
-   if (chosenCol != '') {
-    $('.'+chosenCol).removeClass('ui-state-active');
-   }
+   $('#group_table').find('.cellTitle').each(function(){
+    if ($(this).attr('class').indexOf('ui-state-active') > -1) {
+     classes = $(this).attr('class');
+     classes = classes.split(' ');
+     $(classes).each(function(x) {
+      if (classes[x].indexOf('col') === 0) {
+       $('.'+classes[x]).removeClass('ui-state-active');
+      }
+     });
+    }
+   });
+
    groupText = $(this).text();
    classes   = $(this).attr('class');
    classes   = classes.split(' ');
