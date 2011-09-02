@@ -17,8 +17,8 @@ html {
  margin-top:5px;
  margin-bottom:10px;
  border-bottom:1px dashed;
- width:100%;
- min-width:1300px;
+ width:90%;
+ min-width:1160px;
 }
 
 #loading {
@@ -73,8 +73,7 @@ text-align:center;
 
 #header {
  height: 100px;
- /*background-image:url('/media/css/img/headbg.png ');
- background-repeat:repeat-x;*/
+
 }
 
 #titlehead {
@@ -168,8 +167,7 @@ text-align:center;
  float:left;
  display:block;
  min-height:520px;
- width:100%;
- min-width:1160px;
+ width:1160px;
  margin-top:10px;
  margin-bottom:10px;
 }
