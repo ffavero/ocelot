@@ -408,6 +408,7 @@ function GroupsAnalysis(dataset) {
    }
   );
   $('.selectColumn').click(function(x) {
+   alert(chosenCol);
    if (chosenCol != '') {
     $('.'+chosenCol).removeClass('ui-state-active');
    }
