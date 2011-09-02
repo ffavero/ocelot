@@ -113,7 +113,7 @@
  margin-left:150px
 }
 
-#id_response, #id_event_tot, #id_surv_tot, #id_event_rec, #id_surv_rec, #id_cell_type, #id_age, #id_gender, #id_grade, #id_stage, #id_treatment, #id_subtype, #id_disease, #id_incl_criteria {
+#id_response, #id_event_tot, #id_surv_tot, #id_event_rec, #id_surv_rec, #id_cell_type, #id_age, #id_gender, #id_grade, #id_stage, #id_treatment, #id_subtype, #id_disease, #id_incl_criteria, #id_notes {
  float:right;
  margin-right:10px;
 }
@@ -170,6 +170,7 @@
  text-align:left;
  font-variant: small-caps;
 }
+
 .GPLplatform {
  font-size:12px;
  font-variant: normal;

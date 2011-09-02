@@ -64,18 +64,17 @@ ocelot admin
  </div>  <!-- GSEmGSM -->
 
  <input type='image' id='viewChar'></input>
+
+ <div id='GSEnChann' class='ui-corner-all'>
+  List of Platform(s):
+  {% for platform in platforms %}
+   <div class='GPLplatform ui-corner-all'> <b>{{platform.id}}</b> : {{platform.title}}</div>
+  {% endfor %}
+ </div>
 </div><!--DSmeta-->
 
 <ul id='Dictmenu'>
 </ul>
-
-<div id='GSEnChann' class='ui-corner-all'>
- List of Platform(s):
- {% for platform in platforms %}
-  <div class='GPLplatform ui-corner-all'> <b>{{platform.id}}</b> : {{platform.title}}</div>
- {% endfor %}
-</div>
-
 
 <div id='CharTab'>
  <!--{% for divline in GSMtable %}

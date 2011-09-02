@@ -1,10 +1,8 @@
 function initGEO() {
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
-   $(window).resize(function () {
-    $(this).width($(document).width());
-    $(this).height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
  $('#loading').ajaxStop(function(){
       $(this).fadeOut();
@@ -119,10 +117,8 @@ function removeDS(dataset) {
 
 function goToGSE(gse) {
  $('#loading').fadeIn();
- $(window).resize(function () {
-  $('#loading').width($(document).width());
-  $('#loading').height($(document).height());
- });
+ $('#overlay').width($(document).width());
+ $('#overlay').height($(document).height());
  window.location='/admin/geo/'+gse+'/';
 }
 

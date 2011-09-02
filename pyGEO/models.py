@@ -32,6 +32,7 @@ class MetaInfo(models.Model):
    subtype       = models.CharField(max_length=1000,blank=True)
    disease       = models.CharField(max_length=500,blank=True)
    platform      = models.CharField(max_length=200,blank=True)
+   notes         = models.CharField(max_length=500,blank=True)
    saved         = models.DateField(auto_now=True,null=True)
    released      = models.DateField(null=True)
 

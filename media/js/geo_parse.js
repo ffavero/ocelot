@@ -1,10 +1,8 @@
 function initGEO() {
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
-   $(window).resize(function () {
-    $(this).width($(document).width());
-    $(this).height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
  $('#loading').ajaxStop(function(){
       $(this).fadeOut();
@@ -126,7 +124,7 @@ function initGEO() {
  
  $('input:text').each(function(index){
    /* $(this).attr('disabled',true); */
-   var IDexcluded = ['id_disease','id_subtype','id_treatment'];
+   var IDexcluded = ['id_disease','id_subtype','id_treatment','id_incl_criteria'];
    if ($.inArray($(this).attr('id'),IDexcluded) == -1) {
     $('#Dictmenu').append("<li><a href='#'>"+$(this).attr('id')+"</a></li>")
    }

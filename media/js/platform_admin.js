@@ -44,10 +44,8 @@ function Platforms() {
 
 function goToPlatform(platform) {
  $('#loading').fadeIn();
- $(window).resize(function () {
-  $('#loading').width($(document).width());
-  $('#loading').height($(document).height());
- });
+ $('#overlay').width($(document).width());
+ $('#overlay').height($(document).height());
  window.location='/admin/chip/table/'+platform+'/';
 }
 
@@ -63,10 +61,8 @@ function editPlatform(platform) {
 function PlatformTable(platform_id) {
  $('#loading').ajaxStart(function(){
    $(this).fadeIn();
-   $(window).resize(function () {
-    $(this).width($(document).width());
-    $(this).height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
  $('#loading').ajaxStop(function(){
       $(this).fadeOut();

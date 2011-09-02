@@ -101,6 +101,7 @@ INSTALLED_APPS = (
      'gunicorn',
      'ocelot.main',
      'ocelot.pyGEO',
+     'ocelot.customds',
      'ocelot.Platforms',
      'ocelot.pySurv'
 )
