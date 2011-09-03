@@ -57,12 +57,12 @@ text-align:center;
 }
 
 .helpline{
- margin:10px;
  float:left;
  display:block;
  padding:10px;
  font-size:12px;
  max-width:450px;
+ margin:10px;
 }
 
 .helpline img {

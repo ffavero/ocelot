@@ -383,10 +383,9 @@ border-collapse:separate;*/
 
 #viewerButtons {
  float:left;
- display:block;
+ clear: both;
  width:70%;
  min-width:1024px;
- height:400px
  margin:10px;
 }
 
@@ -395,7 +394,7 @@ border-collapse:separate;*/
  display:block;
  margin:10px;
  width:220px;
- height:220px;
+ min-height:220px;
 }
 
 #analysis_menu{
@@ -528,6 +527,8 @@ border-collapse:separate;*/
  text-align:center;
 }
 
+/* Group part*/
+
 #selctorTable {
  display:none;
 }
@@ -543,5 +544,22 @@ border-collapse:separate;*/
  float:left;
  display:block;
  text-align:left;
+}
+
+#group_tip {
+ float:left;
+ display:block;
+ text-align:left;
+ margin:10px;
+ margin-right:0px;
+ width:100px;
+ height:40px;
+}
+
+#sel_group {
+ float:left;
+ margin:10px;
+ width:30px;
+ height:30px;
 }
 

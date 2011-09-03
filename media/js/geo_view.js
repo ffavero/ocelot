@@ -381,7 +381,8 @@ function GroupsAnalysis(dataset) {
  GroupingSnippet ='<div id="analysis_snippet"> ' +
                    '<div id="Grouping">' +
                     '<div id="field_selector">'+
-                    '<input type="image" id="sel_group" src="/media/css/img/table.png" title="Select the column containing the groups to split the experiments"/>' +
+                    '<div id="group_tip">Click to select the group</div>'+
+                    '<input type="image" id="sel_group" src="/media/css/img/table.png" title="Select the column containing the criteria to divide the samples"/>' +
                     '</div>' +
                     '<div id="show_opts" class="ui-corner-all ui-widget-content">' +
                     '</div>' +
@@ -466,7 +467,7 @@ function GroupsAnalysis(dataset) {
   idRef =  idRef.replace(/ /g,'');
   // Something setted by handleGroupdata function
 
-  title  = ' '+dataset +' '+chosenCol+'; probe: ';
+  title  = 'Dataset: '+dataset +'; probe: ';
   title += $('#selected_id').text();
   groupOpts = '';
   toggleOpts = '';
@@ -475,8 +476,10 @@ function GroupsAnalysis(dataset) {
    toggleOpts = groupOpts;
   } else {
    groupOpts = $.trim($('#group_plot_type').text());
+   title = groupOpts.toUpperCase() +'. ' + title;
+   groupOpts += ':'+ $.trim(groupText);
    toggleOpts = $.trim(groupText.replace(/ /g,''));
-   toggleOpts = $.trim(groupText.replace(/\W/g,''));
+   toggleOpts = toggleOpts.replace(/\W/g,'');
   };
   doItbutton(dataset,idRef,'groupanalysis','group_table',[groupText],false,title,groupOpts,toggleOpts);
  });
@@ -896,7 +899,9 @@ function handleGroupdata(dataTab,groupText) {
  listOfvalues = []
  $.each(dataJSON, function(sample,values) {
   $.each(values, function(title,value) {
-   listOfvalues.push(value);
+   if (value != '') {
+    listOfvalues.push(value);
+   }
   });
  });
  listOfvalues = _.uniq(listOfvalues);
@@ -940,8 +945,12 @@ function handleGroupdata(dataTab,groupText) {
   if (arenumbers.length >= listOfvalues.length/2) {
    //is small and Numeric... mostly useless
    groupHandlerDiv = '<div id="group_handler">' +
-                       'smalnu' +
-                     '</div>';
+                     ' Group by ' + groupText +'<br>' +
+                     ' <i>' + listOfvalues.length + ' items </i><br>' +
+                     ' <i>Resulting plot</i>:<br>'+
+                     ' <dd><div id="group_plot_type">boxplot</div>' +
+                     ' expression/' + groupText +
+                     '</dd></div>';
   } else {
    //is small and Charachters. Can do something like beeswarm
    ROCopts = '';

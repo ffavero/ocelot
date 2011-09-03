@@ -124,7 +124,7 @@ function initGEO() {
  
  $('input:text').each(function(index){
    /* $(this).attr('disabled',true); */
-   var IDexcluded = ['id_disease','id_subtype','id_treatment','id_incl_criteria'];
+   var IDexcluded = ['id_disease','id_subtype','id_treatment','id_incl_criteria','id_notes'];
    if ($.inArray($(this).attr('id'),IDexcluded) == -1) {
     $('#Dictmenu').append("<li><a href='#'>"+$(this).attr('id')+"</a></li>")
    }

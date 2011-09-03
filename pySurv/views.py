@@ -204,12 +204,14 @@ def groupanalysis(ARGVS):
    filename = ARGVS['file']
    data     = ARGVS['data']
    title    = ARGVS['title']
-   opts     = ARGVS['opts']
+   try:
+      opts, dataname = ARGVS['opts'].split(':')
+   except ValueError:
+      opts = ARGVS['opts']
    filewrite = ROOT_PATH + '/media/tmp/' + filename 
    cats    = []
    expr    = []
    names = data.keys()
-   print ARGVS
    for name in names:
       cats.append(data[name]['data'])
       expr.append(data[name]['expression'])
@@ -248,30 +250,30 @@ def groupanalysis(ARGVS):
      title(main,outer=TRUE)
      dev.off()
     }
-    plotPoints <- function(filename,expr,data, main='') {
+    plotPoints <- function(filename, expr, data, dataname, main='') {
      expr  = as.numeric(expr)
      data  = as.character(data)
      CairoPNG(filename=filename,width = 800, height = 400)
-     plot(x=data,y=expr)
+     plot(x=data,y=expr,pch=16,ylab='Expression', xlab=dataname)
      title(main)
      dev.off()
     }
-    plotBoxes <- function(filename,expr,data, main='') {
+    plotBoxes <- function(filename, expr, data, dataname, main='') {
      expr  = as.numeric(expr)
      data  = as.character(data)
      CairoPNG(filename=filename,width = 800, height = 400)
-     boxplot(expr ~ data)
+     boxplot(expr ~ data, ylab='Expression', xlab=dataname)
      title(main)
      dev.off()
     }
    ''')
    try:
       if opts == 'scatterplot':
-         robjects.r['plotPoints'](filename = filewrite, expr = expr, data = cats, main = title)
+         robjects.r['plotPoints'](filename = filewrite, expr = expr, data = cats, dataname = dataname, main = title)
       elif opts == 'boxplot':
-         robjects.r['plotBoxes'](filename = filewrite, expr = expr, data = cats, main = title)
+         robjects.r['plotBoxes'](filename = filewrite, expr = expr, data = cats, dataname = dataname, main = title)
       else:
-         robjects.r['plotRoc'](filename = filewrite, expr = expr, data = cats, category = opts, main = title)
+         robjects.r['plotRoc'](filename = filewrite, expr = expr, data = cats, category = opts, main = title + ' ' +opts)
       return filename
    except:
       return 'Error'
