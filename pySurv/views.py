@@ -254,6 +254,7 @@ def groupanalysis(ARGVS):
      expr  = as.numeric(expr)
      data  = as.character(data)
      CairoPNG(filename=filename,width = 800, height = 400)
+     #plot(x=data,y=expr,col=rgb(0,100,0,50,maxColorValue=255), pch=16,ylab='Expression', xlab=dataname)
      plot(x=data,y=expr,pch=16,ylab='Expression', xlab=dataname)
      title(main)
      dev.off()
