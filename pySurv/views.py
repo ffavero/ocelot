@@ -264,7 +264,7 @@ def groupanalysis(ARGVS):
      expr  = as.numeric(expr)
      data  = as.character(data)
      CairoPNG(filename=filename,width = 800, height = 400)
-     boxplot(expr ~ data, ylab='Expression', xlab=dataname)
+     boxplot(expr ~ data, ylab='Expression', xlab=dataname,outline=FALSE)
      title(main)
      dev.off()
     }
