@@ -10,7 +10,70 @@ PHP4 because then is easily usable on Apache based servers,
 even with an outdated configuration (yeah PHP5 came out 8 years ago...).
 
 
-INSTRUCTIONS:
+INSTALLATION:
+
+  - Unix (OSX, Linux):
+    Python 2.6 or newer is required.
+    Installation with virtualenv:
+
+     On OSX if virtualenv is already installed:
+
+      sudo easy_install pip
+      sudo pip install virtualenv
+
+     Once virtualenv is available:   
+     
+      mkdir ~/envs
+      cd ~/envs/
+      virtualenv --no-site-packages vDjango #(is possible to change the name vDjango in other)
+      ./vDjango/bin/pip install Django
+      ./vDjango/bin/pip install setproctitle
+      ./vDjango/bin/pip install gunicorn
+
+     Now it is possible to download the git trunk of ocelot:
+     
+      mkdir ~/djangoproj/
+      cd ~/djangoproj/
+      git clone git://github.com/francescofavero/ocelot.git
+      
+     Now it is possible to initialize the databases:
+     
+      cd ocelot/
+      ~/envs/vDjango/bin/python manage.py syncdb
+
+     It case that the python installation is missing database support, it is possible
+     to install it as well in the virtualenv:
+
+      ~/envs/vDjango/bin/pip install sqlite3
+
+     Once the database is initialized it is possible to run the Ocelot project:
+
+      ~/envs/vDjango/bin/python manage.py run_gunicorn
+
+     And point the browser at the http://127.0.0.1:8000 (the default address)
+     
+    R dependencies:
+   
+     For the analysis and plot generation, it is required the R statistical language, 
+     available at www.r-project.org.
+
+     the following R packages are also required:
+     
+      survplot: http://www.cbs.dtu.dk/~eklund/survplot/
+      beeswarm: http://cran.r-project.org/web/packages/beeswarm/
+     
+     Once the R environment is installed is also required its python binding library, Rpy2:
+
+      ~/envs/vDjango/bin/pip install rpy2
+
+  
+  - Windows:
+     
+     Probably this will also works on Windows machines once the Python language will be installed.
+     Due to lack of resource we can't provide any tested Windows procedures.
+
+Thanks!
+
 
 
 
