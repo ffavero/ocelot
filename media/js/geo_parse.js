@@ -20,10 +20,8 @@ function initGEO() {
 
  $('#savedict').click(function(){
    $('#loading').fadeIn();
-   $(window).resize(function () {
-    $('#overlay').width($(document).width());
-    $('#overlay').height($(document).height());
-   });
+   $('#overlay').width($(document).width());
+   $('#overlay').height($(document).height());
  });
 
  $('#backToList').button({
