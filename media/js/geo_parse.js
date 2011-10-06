@@ -19,9 +19,11 @@ function initGEO() {
  });
 
  $('#savedict').click(function(){
-   $(this).fadeIn();
-   $('#overlay').width($(document).width());
-   $('#overlay').height($(document).height());
+   $('#loading').fadeIn();
+   $(window).resize(function () {
+    $('#overlay').width($(document).width());
+    $('#overlay').height($(document).height());
+   });
  });
 
  $('#backToList').button({
