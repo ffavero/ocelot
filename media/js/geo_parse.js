@@ -22,7 +22,6 @@ function initGEO() {
    $(this).fadeIn();
    $('#overlay').width($(document).width());
    $('#overlay').height($(document).height());
-   });
  });
 
  $('#backToList').button({
