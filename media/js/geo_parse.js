@@ -19,6 +19,11 @@ function initGEO() {
  });
 
  $('#savedict').click(function(){
+   customWarn = '<p>' +
+               '<span class="ui-icon ui-icon-info"></span>' +
+               '<strong>Please Wait</strong> while saving the data <img src="/media/css/img/loading.gif" />' +
+              '</p>';
+   $('#waiting_warn').html(customWarn);
    $('#loading').fadeIn();
    $('#overlay').width($(document).width());
    $('#overlay').height($(document).height());
