@@ -216,6 +216,7 @@ def RegisterGSE(Dict,MetaI):
    dataset.have_surv_tot = Dict.surv_tot != '' and Dict.event_tot != ''
    dataset.plugin        = 'geo'
    ''' Metainfo part'''
+   dataset.dataset_name  = MetaI.dataset_name
    dataset.samples_count = MetaI.samples_count
    dataset.incl_criteria = MetaI.incl_criteria
    dataset.treatment     = MetaI.treatment

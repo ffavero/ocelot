@@ -12,6 +12,7 @@ class Datasets(models.Model):
    resume the status of the available information
    """
    dataset_id    = models.CharField(max_length=50)
+   dataset_name  = models.CharField(max_length=200,blank=True)
    samples_count = models.IntegerField()
    have_surv_tot = models.BooleanField()
    have_surv_rec = models.BooleanField()
