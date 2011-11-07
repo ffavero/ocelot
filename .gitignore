@@ -4,3 +4,4 @@ data/expressions/*
 data/annotations/*
 *.sqlite
 .DS_Store
+media/tmp/*

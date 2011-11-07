@@ -65,9 +65,12 @@ def getGEOannot(acc,fields):
    print 'Done\n'
 
 def geo_annot_tab(acc,lines):
-   geo_annot_url   = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/annotation/platforms/' + acc + '.annot.gz'
+   #geo_annot_url   = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/annotation/platforms/' + acc + '.annot.gz'
    #alternative_url = 'ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SOFT/by_platform/' + acc + '/'+ acc  + '_family.soft.gz'
-   alternative_url = 'http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?view=data&acc=' + acc + '&form=text'
+   #alternative_url = 'http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?view=data&acc=' + acc + '&form=text'
+   alternative_url = 'http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?view=quick&acc=' + acc + '&form=text'
+   geo_annot_url   = alternative_url
+
    def annot_to_html(annot_platform,lines):
       find_start = re.compile('!platform_table_begin')
       switch  = 'OFF'
