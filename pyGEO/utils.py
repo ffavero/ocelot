@@ -211,6 +211,11 @@ def RegisterGSE(Dict,MetaI):
       dataset = Datasets(dataset_id = Dict.dataset_id)
    else:
       dataset = dataset[0]
+   dataset.have_gender   = Dict.gender != ''
+   dataset.have_age      = Dict.age != ''
+   dataset.have_celltype = Dict.cell_type != ''
+   dataset.have_stage    = Dict.stage != ''
+   dataset.have_grade    = Dict.grade != ''
    dataset.have_response = Dict.response != ''
    dataset.have_surv_rec = Dict.surv_rec != '' and Dict.event_rec != ''
    dataset.have_surv_tot = Dict.surv_tot != '' and Dict.event_tot != ''
