@@ -26,6 +26,7 @@ class MetaInfo(models.Model):
    suited to be in the Dictionary
    """
    dataset_id    = models.CharField(max_length=200)
+   dataset_name  = models.CharField(max_length=200,blank=True)
    samples_count = models.IntegerField(null=True)
    incl_criteria = models.CharField(max_length=1000,blank=True)
    treatment     = models.CharField(max_length=1000,blank=True)
