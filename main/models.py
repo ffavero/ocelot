@@ -32,6 +32,7 @@ class Datasets(models.Model):
    alias_gds     = models.CharField(max_length=50,blank=True)
    platform_id   = models.CharField(max_length=200,blank=True)
    platform_name = models.CharField(max_length=1000,blank=True)
+   notes         = models.CharField(max_length=1000,blank=True)
 
 class Ocelotqueue(models.Model):
    '''

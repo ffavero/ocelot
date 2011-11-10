@@ -229,6 +229,7 @@ def RegisterGSE(Dict,MetaI):
    dataset.disease       = MetaI.disease
    dataset.saved         = MetaI.saved
    dataset.released      = MetaI.released
+   dataset.notes         = MetaI.notes
    platform_id = []
    platform_name = []
    platforms = MetaI.platform.split(',')
